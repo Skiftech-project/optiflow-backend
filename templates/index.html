@@ -1,21 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Розрахунок кутів розбіжності</title>
+    <title>Калькулятор розсіяння зони плями</title>
+    <script>
+        function updateRequiredFields() {
+            var anglesOption = document.getElementById('angles_option');
+            var plumeOption = document.getElementById('plume_option');
+            var angleWidthField = document.getElementById('angle_width');
+            var angleHeightField = document.getElementById('angle_height');
+            var plumeWidthField = document.getElementById('plume_width');
+            var plumeHeightField = document.getElementById('plume_height');
+
+            if (anglesOption.checked) {
+                angleWidthField.required = true;
+                angleHeightField.required = true;
+                plumeWidthField.required = false;
+                plumeHeightField.required = false;
+                angleWidthField.disabled = false;
+                angleHeightField.disabled = false;
+                plumeWidthField.disabled = true;
+                plumeHeightField.disabled = true;
+            } else if (plumeOption.checked) {
+                angleWidthField.required = false;
+                angleHeightField.required = false;
+                plumeWidthField.required = true;
+                plumeHeightField.required = true;
+                angleWidthField.disabled = true;
+                angleHeightField.disabled = true;
+                plumeWidthField.disabled = false;
+                plumeHeightField.disabled = false;
+            }
+        }
+    </script>
 </head>
 <body>
-    <h1>Розрахунок кутів розбіжності променю</h1>
-    <form method="post">
-        <label for="plume_width">Ширина плями (метри):</label>
-        <input type="number" name="plume_width" step="0.01" required><br>
+    <h1>Калькулятор розсіяння зони плями</h1>
+    <form method="POST" onsubmit="return validateForm()">
+        <p>
+            <label for="distance">Відстань:</label>
+            <input type="number" name="distance" step="0.01" id="distance" required min="1">
+        </p>
 
-        <label for="plume_height">Висота плями (метри):</label>
-        <input type="number" name="plume_height" step="0.01" required><br>
+        <p>
+            <label for="fixed_radius">Радіус:</label>
+            <input type="number" name="fixed_radius" step="0.01" id="fixed_radius" required min="0.01">
+        </p>
 
-        <label for="distance">Дистанція (метри):</label>
-        <input type="number" name="distance" step="0.01" required><br>
+        <p>
+            <input type="radio" name="option" value="angles" id="angles_option" onclick="updateRequiredFields()" required> Ввести кути:
+        </p>
 
-        <input type="submit" value="Розрахувати">
+        <p>
+            <label for="angle_width">Кут ширини (радіани):</label>
+            <input type="number" name="angle_width" step="0.01" id="angle_width" disabled>
+        </p>
+
+        <p>
+            <label for="angle_height">Кут висоти (радіани):</label>
+            <input type="number" name="angle_height" step="0.01" id="angle_height" disabled>
+        </p>
+
+        <p>
+            <input type="radio" name="option" value="plume" id="plume_option" onclick="updateRequiredFields()" required> Ввести ширину та висоту:
+        </p>
+
+        <p>
+            <label for="plume_width">Ширина плями:</label>
+            <input type="number" name="plume_width" step="0.01" id="plume_width" disabled min="0.01">
+        </p>
+
+        <p>
+            <label for="plume_height">Висота плями:</label>
+            <input type="number" name="plume_height" step="0.01" id="plume_height" disabled min="0.01">
+        </p>
+
+        <p>
+            <input type="submit" value="Розрахувати">
+        </p>
     </form>
 </body>
 </html>
