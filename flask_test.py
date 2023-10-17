@@ -30,6 +30,7 @@ def index():
             angle_width = calculate_divergence_angle(plume_width, distance)
             angle_height = calculate_divergence_angle(plume_height, distance)
 
+            # put into function
             if angle_width == angle_height:
                 area = calculate_area(fixed_radius, angle_width)
             else:
@@ -51,6 +52,7 @@ def calculate_divergence_angle(size, distance):
     return angle
 
 
+# remake function, r - distance
 def calculate_area(radius, angle):
     area = 2 * pi * (radius ** 2) * (1 - cos(angle))
     return area
@@ -61,6 +63,7 @@ def calculate_size(angle, distance):
     return size
 
 
+# remake function
 def calculate_distance(size, angle):
     distance = size / (2 * tan(angle / 2))
     return distance
