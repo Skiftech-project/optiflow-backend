@@ -39,6 +39,35 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/module_2', methods=['GET', 'POST'])
+def module_2():
+    if request.method == 'POST':
+        min_plume_size = float(request.form['min_plume_size']) * 1000
+        angle_width = radians(float(request.form['angle_width']))
+        angle_height = radians(float(request.form['angle_height']))
+
+        min_distance = calculate_distance(min_plume_size, min(angle_width, angle_height))
+
+        return render_template('result_module2.html', min_plume_size=min_plume_size, angle_width=degrees(angle_width),
+                               angle_height=degrees(angle_height), min_distance=min_distance)
+    return render_template('module2.html')
+
+
+@app.route('/module_3', methods=['GET', 'POST'])
+def module_3():
+    if request.method == 'POST':
+        angle_width = radians(float(request.form['angle_width']))
+        angle_height = radians(float(request.form['angle_height']))
+        distance = float(request.form['distance']) * 1000
+
+        plume_width = calculate_size(angle_width, distance)
+        plume_height = calculate_size(angle_height, distance)
+
+        return render_template('result_module3.html', distance=distance, angle_width=degrees(angle_width),
+                               angle_height=degrees(angle_height), plume_width=plume_width, plume_height=plume_height)
+    return render_template('module3.html')
+
+
 def calculate_divergence_angle(size, distance):
     angle = 2 * atan(size / (2 * distance))
     return angle
@@ -51,7 +80,7 @@ def calculate_max_area(sensitivity, power):
 
 def calculate_max_distance(max_area, angle_width, angle_height):
     max_angle = max(angle_width, angle_height)
-    max_distance = sqrt(max_area / (2 * pi * (1 - cos(max_angle / 2)) * min(angle_width, angle_height)/max_angle))
+    max_distance = sqrt(max_area / (2 * pi * (1 - cos(max_angle / 2)) * min(angle_width, angle_height) / max_angle))
     return max_distance
 
 
