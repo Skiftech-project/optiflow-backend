@@ -7,5 +7,5 @@ pip install requirements.txt
 ```
 Для запуску додатку напишіть у консолі
 ```
-python flask_test.py
+python test.py
 ```
