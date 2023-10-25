@@ -7,7 +7,7 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        distance = float(request.form['distance']) * 1000
+        distance = float(request.form['distance'])
         option = request.form.get('plume_type')
 
         sensitivity = float(request.form['sensitivity'])
@@ -21,11 +21,11 @@ def index():
             max_distance = calculate_max_distance(max_area, angle_width, angle_height)
 
         elif option == 'rectangle':
-            plume_width = float(request.form['plume_width']) * 1000
-            plume_height = float(request.form['plume_height']) * 1000
+            plume_width = float(request.form['plume_width'])
+            plume_height = float(request.form['plume_height'])
 
-            angle_width = radians(calculate_divergence_angle(plume_width, distance))
-            angle_height = radians(calculate_divergence_angle(plume_height, distance))
+            angle_width = (calculate_divergence_angle(plume_width, distance))
+            angle_height = (calculate_divergence_angle(plume_height, distance))
 
             max_distance = calculate_max_distance(max_area, angle_width, angle_height)
 
@@ -42,7 +42,7 @@ def index():
 @app.route('/module_2', methods=['GET', 'POST'])
 def module_2():
     if request.method == 'POST':
-        min_plume_size = float(request.form['min_plume_size']) * 1000
+        min_plume_size = float(request.form['min_plume_size'])
         angle_width = radians(float(request.form['angle_width']))
         angle_height = radians(float(request.form['angle_height']))
 
@@ -58,7 +58,7 @@ def module_3():
     if request.method == 'POST':
         angle_width = radians(float(request.form['angle_width']))
         angle_height = radians(float(request.form['angle_height']))
-        distance = float(request.form['distance']) * 1000
+        distance = float(request.form['distance'])
 
         plume_width = calculate_size(angle_width, distance)
         plume_height = calculate_size(angle_height, distance)
@@ -80,7 +80,9 @@ def calculate_max_area(sensitivity, power):
 
 def calculate_max_distance(max_area, angle_width, angle_height):
     max_angle = max(angle_width, angle_height)
-    max_distance = sqrt(max_area / (2 * pi * (1 - cos(max_angle / 2)) * min(angle_width, angle_height) / max_angle))
+    min_angle = min(angle_width, angle_height)
+    coefficient = min_angle / max_angle
+    max_distance = sqrt((max_area / (2 * pi * (1 - cos(max_angle / 2)))) / coefficient)
     return max_distance
 
 
