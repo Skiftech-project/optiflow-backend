@@ -163,8 +163,6 @@ def calculate_size(angle, distance):
     return size
 
 
-# we need to calculate distance another way: get minSize and two angles for this
-# it will be: distance = minSize / (2 * tan(min(angle_width, angle_height) / 2))
 def calculate_distance(size, angle):
     distance = size / (2 * tan(angle / 2))
     return distance
