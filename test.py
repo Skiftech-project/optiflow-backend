@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, jsonify
 from math import *
+from flasgger import Swagger
 from flask_cors import CORS
 
 app = Flask(__name__)
+Swagger(app)
 # for working on same ports
 # CORS(app)
 
@@ -78,6 +80,38 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    """
+    Описание вашего маршрута index.
+    ---
+    post:
+      description: Обработка POST запроса.
+      parameters:
+        - name: distance
+          in: formData
+          type: number
+          description: Расстояние
+        - name: plume_type
+          in: formData
+          type: string
+          description: Тип плями (ellipse или rectangle)
+        - name: sensitivity
+          in: formData
+          type: number
+          description: Чувствительность
+        - name: power
+          in: formData
+          type: number
+          description: Мощность
+        # Добавьте другие параметры, если необходимо
+      responses:
+        200:
+          description: Успешный ответ
+    get:
+      description: Обработка GET запроса.
+      responses:
+        200:
+          description: Успешный ответ
+    """
     if request.method == 'POST':
         distance = float(request.form['distance'])
         option = request.form.get('plume_type')
@@ -113,6 +147,34 @@ def index():
 
 @app.route('/module_2', methods=['GET', 'POST'])
 def module_2():
+    """
+        Описание вашего маршрута module_2.
+        ---
+        post:
+          description: Обработка POST запроса.
+          parameters:
+            - name: min_plume_size
+              in: formData
+              type: number
+              description: Минимальный размер плями
+            - name: angle_width
+              in: formData
+              type: number
+              description: Угол ширины
+            - name: angle_height
+              in: formData
+              type: number
+              description: Угол высоты
+            # Добавьте другие параметры, если необходимо
+          responses:
+            200:
+              description: Успешный ответ
+        get:
+          description: Обработка GET запроса.
+          responses:
+            200:
+              description: Успешный ответ
+        """
     if request.method == 'POST':
         min_plume_size = float(request.form['min_plume_size'])
         angle_width = radians(float(request.form['angle_width']))
@@ -127,6 +189,34 @@ def module_2():
 
 @app.route('/module_3', methods=['GET', 'POST'])
 def module_3():
+    """
+        Описание вашего маршрута module_3.
+        ---
+        post:
+          description: Обработка POST запроса.
+          parameters:
+            - name: angle_width
+              in: formData
+              type: number
+              description: Угол ширины
+            - name: angle_height
+              in: formData
+              type: number
+              description: Угол высоты
+            - name: distance
+              in: formData
+              type: number
+              description: Расстояние
+            # Добавьте другие параметры, если необходимо
+          responses:
+            200:
+              description: Успешный ответ
+        get:
+          description: Обработка GET запроса.
+          responses:
+            200:
+              description: Успешный ответ
+        """
     if request.method == 'POST':
         angle_width = radians(float(request.form['angle_width']))
         angle_height = radians(float(request.form['angle_height']))
