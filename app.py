@@ -16,33 +16,34 @@ def index():
         return jsonify({
             "get": 200
         })
-    data = request.get_json()
-    distance = float(data['distance'])
-    sensitivity = float(data['sensitivity'])
-    power = float(data['power'])
-    max_area = calculate_max_area(sensitivity, power)
+    elif request.method == 'POST':
+        data = request.get_json()
+        distance = float(data['distance'])
+        sensitivity = float(data['sensitivity'])
+        power = float(data['power'])
+        max_area = calculate_max_area(sensitivity, power)
 
-    if 'angle_width' and 'angle_height' in data:
-        angle_width = radians(float(data['angle_width']))
-        angle_height = radians(float(data['angle_height']))
+        if 'angle_width' and 'angle_height' in data:
+            angle_width = radians(float(data['angleWidth']))
+            angle_height = radians(float(data['angleHeight']))
 
-        max_distance = calculate_max_distance(max_area, angle_width, angle_height)
-    elif 'plume_width' and 'plume_height' in data:
-        plume_width = float(data['plume_width'])
-        plume_height = float(data['plume_height'])
+            max_distance = calculate_max_distance(max_area, angle_width, angle_height)
+        elif 'plume_width' and 'plume_height' in data:
+            plume_width = float(data['spotWidth'])
+            plume_height = float(data['spotHeight'])
 
-        angle_width = (calculate_divergence_angle(plume_width, distance))
-        angle_height = (calculate_divergence_angle(plume_height, distance))
+            angle_width = (calculate_divergence_angle(plume_width, distance))
+            angle_height = (calculate_divergence_angle(plume_height, distance))
 
-        max_distance = calculate_max_distance(max_area, angle_width, angle_height)
+            max_distance = calculate_max_distance(max_area, angle_width, angle_height)
 
-    return jsonify({
-        # 'angle_width': angle_width,
-        # 'angle_height': angle_height,
-        # 'max_area': max_area,
-        # 'max_distance': max_distance
-        "test": 200
-    })
+        return jsonify({
+            'angle_width': angle_width,
+            'angle_height': angle_height,
+            'max_area': max_area,
+            'max_distance': max_distance,
+            "test": 200
+        })
 
 
 # API for module 2
