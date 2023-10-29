@@ -10,7 +10,7 @@ CORS(app)
 
 
 # module 1 and 4 (API)
-@app.route('/index', methods=['POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
     data = request.get_json()
     distance = float(data['distance'])
