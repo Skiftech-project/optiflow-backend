@@ -7,11 +7,12 @@ app = Flask(__name__)
 Swagger(app)
 # for working on same ports
 CORS(app)
-g.angle_width = None
-g.angle_height = None
-g.max_area = None
-g.max_distance = None
-
+# Создайте контекст приложения
+with app.app_context():
+    g.angle_width = None
+    g.angle_height = None
+    g.max_area = None
+    g.max_distance = None
 
 # module 1 and 4 (API)
 @app.route('/index', methods=['GET', 'POST'])
@@ -26,7 +27,6 @@ def index():
         if 'angleWidth' and 'angleHeight' in data:
             angle_width = radians(float(data['angleWidth']))
             angle_height = radians(float(data['angleHeight']))
-
             max_distance = calculate_max_distance(max_area, angle_width, angle_height)
         elif 'spotWidth' and 'spotHeight' in data:
             plume_width = float(data['spotWidth'])
@@ -35,12 +35,12 @@ def index():
             angle_width = (calculate_divergence_angle(plume_width, distance))
             angle_height = (calculate_divergence_angle(plume_height, distance))
 
-            max_distance = calculate_max_distance(max_area, angle_width, angle_height)
-
-        g.angle_width = angle_width
-        g.angle_height = angle_height
-        g.max_area = max_area
-        g.max_distance = max_distance
+        # Устанавливайте значения внутри контекста приложения
+        with app.app_context():
+            g.angle_width = angle_width
+            g.angle_height = angle_height
+            g.max_area = max_area
+            g.max_distance = max_distance
 
         return jsonify({
             'angle_width': angle_width,
