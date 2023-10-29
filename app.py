@@ -1,62 +1,41 @@
-from flask import Flask, render_template, request, jsonify, g
+from flask import Flask, render_template, request, jsonify
 from math import *
 from flasgger import Swagger
 from flask_cors import CORS
 
 app = Flask(__name__)
 Swagger(app)
+
 # for working on same ports
 CORS(app)
-# Создайте контекст приложения
-with app.app_context():
-    g.angle_width = None
-    g.angle_height = None
-    g.max_area = None
-    g.max_distance = None
+
 
 # module 1 and 4 (API)
-@app.route('/index', methods=['GET', 'POST'])
+@app.route('/index', methods=['POST'])
 def index():
-    if request.method == 'POST':
-        data = request.get_json()
-        distance = float(data['distance'])
-        sensitivity = float(data['sensitivity'])
-        power = float(data['power'])
-        max_area = calculate_max_area(sensitivity, power)
+    data = request.get_json()
+    distance = float(data['distance'])
+    sensitivity = float(data['sensitivity'])
+    power = float(data['power'])
+    max_area = calculate_max_area(sensitivity, power)
 
-        if 'angleWidth' and 'angleHeight' in data:
-            angle_width = radians(float(data['angleWidth']))
-            angle_height = radians(float(data['angleHeight']))
-            max_distance = calculate_max_distance(max_area, angle_width, angle_height)
-        elif 'spotWidth' and 'spotHeight' in data:
-            plume_width = float(data['spotWidth'])
-            plume_height = float(data['spotHeight'])
+    if 'angleWidth' and 'angleHeight' in data:
+        angle_width = radians(float(data['angleWidth']))
+        angle_height = radians(float(data['angleHeight']))
+        max_distance = calculate_max_distance(max_area, angle_width, angle_height)
+    elif 'spotWidth' and 'spotHeight' in data:
+        plume_width = float(data['spotWidth'])
+        plume_height = float(data['spotHeight'])
+        angle_width = (calculate_divergence_angle(plume_width, distance))
+        angle_height = (calculate_divergence_angle(plume_height, distance))
+        max_distance = calculate_max_distance(max_area, angle_width, angle_height)
 
-            angle_width = (calculate_divergence_angle(plume_width, distance))
-            angle_height = (calculate_divergence_angle(plume_height, distance))
-
-        # Устанавливайте значения внутри контекста приложения
-        with app.app_context():
-            g.angle_width = angle_width
-            g.angle_height = angle_height
-            g.max_area = max_area
-            g.max_distance = max_distance
-
-        return jsonify({
-            'angle_width': angle_width,
-            'angle_height': angle_height,
-            'max_area': max_area,
-            'max_distance': max_distance,
-            "test": 200
-        })
-    elif request.method == 'GET':
-        # Возвращать предварительно рассчитанные значения при GET запросе
-        return jsonify({
-            'angle_width': g.angle_width,
-            'angle_height': g.angle_height,
-            'max_area': g.max_area,
-            'max_distance': g.max_distance
-        })
+    return jsonify({
+        'angle_width': angle_width,
+        'angle_height': angle_height,
+        'max_area': max_area,
+        'max_distance': max_distance,
+    })
 
 
 # API for module 2
