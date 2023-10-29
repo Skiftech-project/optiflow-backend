@@ -23,12 +23,12 @@ def index():
         power = float(data['power'])
         max_area = calculate_max_area(sensitivity, power)
 
-        if 'angle_width' and 'angle_height' in data:
+        if 'angleWidth' and 'angleHeight' in data:
             angle_width = radians(float(data['angleWidth']))
             angle_height = radians(float(data['angleHeight']))
 
             max_distance = calculate_max_distance(max_area, angle_width, angle_height)
-        elif 'plume_width' and 'plume_height' in data:
+        elif 'spotWidth' and 'spotHeight' in data:
             plume_width = float(data['spotWidth'])
             plume_height = float(data['spotHeight'])
 
