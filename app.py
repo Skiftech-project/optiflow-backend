@@ -12,6 +12,10 @@ CORS(app)
 # module 1 and 4 (API)
 @app.route('/index', methods=['GET', 'POST'])
 def index():
+    if request.method == 'GET':
+        return jsonify({
+            "get": 200
+        })
     data = request.get_json()
     distance = float(data['distance'])
     sensitivity = float(data['sensitivity'])
