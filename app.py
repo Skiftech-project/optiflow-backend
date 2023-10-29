@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, g
 from math import *
 from flasgger import Swagger
 from flask_cors import CORS
@@ -7,16 +7,16 @@ app = Flask(__name__)
 Swagger(app)
 # for working on same ports
 CORS(app)
+g.angle_width = None
+g.angle_height = None
+g.max_area = None
+g.max_distance = None
 
 
 # module 1 and 4 (API)
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-    if request.method == 'GET':
-        return jsonify({
-            "get": 200
-        })
-    elif request.method == 'POST':
+    if request.method == 'POST':
         data = request.get_json()
         distance = float(data['distance'])
         sensitivity = float(data['sensitivity'])
@@ -37,12 +37,25 @@ def index():
 
             max_distance = calculate_max_distance(max_area, angle_width, angle_height)
 
+        g.angle_width = angle_width
+        g.angle_height = angle_height
+        g.max_area = max_area
+        g.max_distance = max_distance
+
         return jsonify({
             'angle_width': angle_width,
             'angle_height': angle_height,
             'max_area': max_area,
             'max_distance': max_distance,
             "test": 200
+        })
+    elif request.method == 'GET':
+        # Возвращать предварительно рассчитанные значения при GET запросе
+        return jsonify({
+            'angle_width': g.angle_width,
+            'angle_height': g.angle_height,
+            'max_area': g.max_area,
+            'max_distance': g.max_distance
         })
 
 
