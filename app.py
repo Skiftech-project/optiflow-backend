@@ -33,10 +33,11 @@ def index():
         max_distance = calculate_max_distance(max_area, angle_width, angle_height)
 
     return jsonify({
-        'angle_width': angle_width,
-        'angle_height': angle_height,
-        'max_area': max_area,
-        'max_distance': max_distance
+        # 'angle_width': angle_width,
+        # 'angle_height': angle_height,
+        # 'max_area': max_area,
+        # 'max_distance': max_distance
+        "test": 200
     })
 
 
