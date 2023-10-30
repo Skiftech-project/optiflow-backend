@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify
 from math import *
 from flasgger import Swagger
 from flask_cors import CORS
@@ -23,19 +23,23 @@ def index():
         angle_width = radians(float(data['angleWidth']))
         angle_height = radians(float(data['angleHeight']))
         max_distance = calculate_max_distance(max_area, angle_width, angle_height)
+        return jsonify({
+            'max_area': max_area,
+            'max_distance': max_distance,
+        })
+
     elif 'spotWidth' and 'spotHeight' in data:
         plume_width = float(data['spotWidth'])
         plume_height = float(data['spotHeight'])
         angle_width = (calculate_divergence_angle(plume_width, distance))
         angle_height = (calculate_divergence_angle(plume_height, distance))
         max_distance = calculate_max_distance(max_area, angle_width, angle_height)
-
-    return jsonify({
-        'angle_width': angle_width,
-        'angle_height': angle_height,
-        'max_area': max_area,
-        'max_distance': max_distance,
-    })
+        return jsonify({
+            'angle_width': degrees(angle_width),
+            'angle_height':  degrees(angle_height),
+            'max_area': max_area,
+            'max_distance': max_distance,
+        })
 
 
 # API for module 2
@@ -43,15 +47,12 @@ def index():
 def module_2():
     data = request.get_json()
     min_plume_size = float(data['min_plume_size'])
-    angle_width = radians(float(data['angle_width']))
-    angle_height = radians(float(data['angle_height']))
+    angle_width = radians(float(data['angleWidth']))
+    angle_height = radians(float(data['angleHeight']))
 
     min_distance = calculate_distance(min_plume_size, min(angle_width, angle_height))
 
     return jsonify({
-        'angle_width': angle_width,
-        'angle_height': angle_height,
-        'min_plume_size': min_plume_size,
         'min_distance': min_distance
     })
 
@@ -60,17 +61,14 @@ def module_2():
 @app.route('/module_3', methods=['POST'])
 def module_3():
     data = request.get_json()
-    angle_width = radians(float(data['angle_width']))
-    angle_height = radians(float(data['angle_height']))
+    angle_width = radians(float(data['angleWidth']))
+    angle_height = radians(float(data['angleHeight']))
     distance = float(data['distance'])
 
     plume_width = calculate_size(angle_width, distance)
     plume_height = calculate_size(angle_height, distance)
 
     return jsonify({
-        'angle_width': angle_width,
-        'angle_height': angle_height,
-        'distance': distance,
         'plume_width': plume_width,
         'plume_height': plume_height,
     })
