@@ -18,8 +18,11 @@ def index():
     sensitivity = float(data['sensitivity'])
     power = float(data['power'])
     max_area = calculate_max_area(sensitivity, power)
+    print(data)
 
-    if data['radioKey'] == 'ellipse':
+    # if data['radioKey'] == 'ellipse':
+    # elif data['radioKey'] == 'rectangle':
+    if data['angleWidth'] and data['angleHeight'] != 0:
         angle_width = radians(float(data['angleWidth']))
         angle_height = radians(float(data['angleHeight']))
         max_distance = calculate_max_distance(max_area, angle_width, angle_height)
@@ -28,7 +31,7 @@ def index():
             'max_distance': max_distance,
         })
 
-    elif data['radioKey'] == 'rectangle':
+    elif data['spotWidth'] and data['spotHeight'] != 0:
         plume_width = float(data['spotWidth'])
         plume_height = float(data['spotHeight'])
         angle_width = (calculate_divergence_angle(plume_width, distance))
@@ -39,6 +42,11 @@ def index():
             'angle_height': degrees(angle_height),
             'max_area': max_area,
             'max_distance': max_distance,
+        })
+
+    else:
+        return jsonify({
+            'bad_request': 'all fields are filled',
         })
 
 
