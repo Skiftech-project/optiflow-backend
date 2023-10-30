@@ -22,7 +22,7 @@ def index():
 
     # if data['radioKey'] == 'ellipse':
     # elif data['radioKey'] == 'rectangle':
-    if data['angleWidth'] and data['angleHeight'] != 0:
+    if 'angleWidth' and 'angleHeight' in data:
         angle_width = radians(float(data['angleWidth']))
         angle_height = radians(float(data['angleHeight']))
         max_distance = calculate_max_distance(max_area, angle_width, angle_height)
@@ -31,7 +31,7 @@ def index():
             'max_distance': max_distance,
         })
 
-    elif data['spotWidth'] and data['spotHeight'] != 0:
+    elif 'spotWidth' and 'spotHeight' in data:
         plume_width = float(data['spotWidth'])
         plume_height = float(data['spotHeight'])
         angle_width = (calculate_divergence_angle(plume_width, distance))
