@@ -13,6 +13,43 @@ CORS(app)
 # module 1 and 4 (API)
 @app.route('/index', methods=['POST'])
 def index():
+    """
+       This is the index API.
+       ---
+       parameters:
+         - name: distance
+           in: formData
+           type: number
+           required: true
+         - name: sensitivity
+           in: formData
+           type: number
+           required: true
+         - name: power
+           in: formData
+           type: number
+           required: true
+         - name: angleWidth
+           in: formData
+           type: number
+           required: true
+         - name: angleHeight
+           in: formData
+           type: number
+           required: true
+         - name: spotWidth
+           in: formData
+           type: number
+           required: true
+         - name: spotHeight
+           in: formData
+           type: number
+           required: true
+       responses:
+         200:
+           description: Max distance calculation result.
+       """
+
     data = request.get_json()
     distance = float(data['distance'])
     sensitivity = float(data['sensitivity'])
@@ -20,8 +57,6 @@ def index():
     max_area = calculate_max_area(sensitivity, power)
     print(data)
 
-    # if data['radioKey'] == 'ellipse':
-    # elif data['radioKey'] == 'rectangle':
     if 'angleWidth' and 'angleHeight' in data:
         angle_width = radians(float(data['angleWidth']))
         angle_height = radians(float(data['angleHeight']))
@@ -53,6 +88,27 @@ def index():
 # API for module 2
 @app.route('/module_2', methods=['POST'])
 def module_2():
+    """
+    This is the module 2 API.
+    ---
+    parameters:
+      - name: min_plume_size
+        in: formData
+        type: number
+        required: true
+      - name: angleWidth
+        in: formData
+        type: number
+        required: true
+      - name: angleHeight
+        in: formData
+        type: number
+        required: true
+    responses:
+      200:
+        description: Minimal distance calculation result.
+    """
+
     data = request.get_json()
     min_plume_size = float(data['min_plume_size'])
     angle_width = radians(float(data['angleWidth']))
@@ -68,6 +124,27 @@ def module_2():
 # API for module 3
 @app.route('/module_3', methods=['POST'])
 def module_3():
+    """
+    This is the module 3 API.
+    ---
+    parameters:
+      - name: angleWidth
+        in: formData
+        type: number
+        required: true
+      - name: angleHeight
+        in: formData
+        type: number
+        required: true
+      - name: distance
+        in: formData
+        type: number
+        required: true
+    responses:
+      200:
+        description: Plume width and height calculation result.
+    """
+
     data = request.get_json()
     angle_width = radians(float(data['angleWidth']))
     angle_height = radians(float(data['angleHeight']))
