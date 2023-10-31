@@ -27,8 +27,8 @@ def index():
         angle_height = radians(float(data['angleHeight']))
         max_distance = calculate_max_distance(max_area, angle_width, angle_height)
         return jsonify({
-            'max_area': max_area,
-            'max_distance': max_distance,
+            'max_area': round(max_area, 2),
+            'max_distance': round(max_distance, 2),
         })
 
     elif 'spotWidth' and 'spotHeight' in data:
@@ -38,10 +38,10 @@ def index():
         angle_height = (calculate_divergence_angle(plume_height, distance))
         max_distance = calculate_max_distance(max_area, angle_width, angle_height)
         return jsonify({
-            'angle_width': degrees(angle_width),
-            'angle_height': degrees(angle_height),
-            'max_area': max_area,
-            'max_distance': max_distance,
+            'angle_width': round(degrees(angle_width), 2),
+            'angle_height': round(degrees(angle_height), 2),
+            'max_area': round(max_area, 2),
+            'max_distance': round(max_distance, 2),
         })
 
     else:
@@ -61,7 +61,7 @@ def module_2():
     min_distance = calculate_distance(min_plume_size, min(angle_width, angle_height))
 
     return jsonify({
-        'min_distance': min_distance
+        'min_distance': round(min_distance, 2)
     })
 
 
@@ -77,8 +77,8 @@ def module_3():
     plume_height = calculate_size(angle_height, distance)
 
     return jsonify({
-        'plume_width': plume_width,
-        'plume_height': plume_height,
+        'plume_width': round(plume_width, 2),
+        'plume_height': round(plume_height, 2),
     })
 
 
