@@ -51,7 +51,6 @@ def index():
        """
 
     data = request.get_json()
-    distance = float(data['distance'])
     sensitivity = float(data['sensitivity'])
     power = float(data['power'])
     max_area = calculate_max_area(sensitivity, power)
@@ -62,11 +61,11 @@ def index():
         angle_height = radians(float(data['angleHeight']))
         max_distance = calculate_max_distance(max_area, angle_width, angle_height)
         return jsonify({
-            'max_area': round(max_area, 2),
             'max_distance': round(max_distance, 2),
         })
 
     elif 'spotWidth' and 'spotHeight' in data:
+        distance = float(data['distance'])
         plume_width = float(data['spotWidth'])
         plume_height = float(data['spotHeight'])
         angle_width = (calculate_divergence_angle(plume_width, distance))
@@ -75,7 +74,6 @@ def index():
         return jsonify({
             'angle_width': round(degrees(angle_width), 2),
             'angle_height': round(degrees(angle_height), 2),
-            'max_area': round(max_area, 2),
             'max_distance': round(max_distance, 2),
         })
 
