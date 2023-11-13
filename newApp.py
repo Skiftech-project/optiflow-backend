@@ -20,6 +20,14 @@ def index():
     if 'angleWidth' and 'angleHeight' in data:
         angle_width = radians(float(data['angleWidth']))
         angle_height = radians(float(data['angleHeight']))
+
+        if 'plumeForm' is 'rectangle':
+            coefficient = 1
+            print(f'angles rectangle {coefficient}')
+        elif 'plumeForm' is 'ellipse':
+            coefficient = 2
+            print(f'angles  ellipse {coefficient}')
+
         max_distance = calculate_max_distance(max_area, angle_width, angle_height)
 
     elif 'spotWidth' and 'spotHeight' in data:
@@ -28,6 +36,14 @@ def index():
         plume_height = float(data['spotHeight'])
         angle_width = (calculate_divergence_angle(plume_width, distance))
         angle_height = (calculate_divergence_angle(plume_height, distance))
+
+        if 'plumeForm' is 'rectangle':
+            coefficient = 1
+            print(f'spotWidth rectangle {coefficient}')
+        elif 'plumeForm' is 'ellipse':
+            coefficient = 2
+            print(f'spotWidth ellipse {coefficient}')
+
         max_distance = calculate_max_distance(max_area, angle_width, angle_height)
 
     # module 2
