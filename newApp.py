@@ -13,6 +13,7 @@ CORS(app)
 @app.route('/index', methods=['POST'])
 def index():
     data = request.get_json()
+    print(data)
     sensitivity = float(data['sensitivity'])
     power = float(data['power'])
     max_area = calculate_max_area(sensitivity, power)
