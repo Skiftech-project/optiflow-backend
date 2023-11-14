@@ -17,18 +17,13 @@ def index():
     power = float(data['power'])
     max_area = calculate_max_area(sensitivity, power)
 
+    plume_form = data['plumeForm']
+
     if 'angleWidth' and 'angleHeight' in data:
         angle_width = radians(float(data['angleWidth']))
         angle_height = radians(float(data['angleHeight']))
 
-        if data['plumeForm'] == 'rectangle':
-            coefficient = 1
-            print(f'angles rectangle {coefficient}')
-        elif data['plumeForm'] == 'ellipse':
-            coefficient = 2
-            print(f'angles ellipse {coefficient}')
-
-        max_distance = calculate_max_distance(max_area, angle_width, angle_height)
+        max_distance = calculate_max_distance(max_area, angle_width, angle_height, plume_form)
 
     elif 'spotWidth' and 'spotHeight' in data:
         distance = float(data['distance'])
@@ -37,14 +32,7 @@ def index():
         angle_width = (calculate_divergence_angle(plume_width, distance))
         angle_height = (calculate_divergence_angle(plume_height, distance))
 
-        if data['plumeForm'] == 'rectangle':
-            coefficient = 1
-            print(f'spotWidth rectangle {coefficient}')
-        elif data['plumeForm'] == 'ellipse':
-            coefficient = 2
-            print(f'spotWidth ellipse {coefficient}')
-
-        max_distance = calculate_max_distance(max_area, angle_width, angle_height)
+        max_distance = calculate_max_distance(max_area, angle_width, angle_height, plume_form)
 
     # module 2
     min_plume_size = float(data['min_plume_size'])
@@ -122,7 +110,7 @@ def calculate_max_area(sensitivity, power):
     return max_area
 
 
-def calculate_max_distance(max_area, angle_width, angle_height):
+def calculate_max_distance(max_area, angle_width, angle_height, plume_form):
     """
     calculate max guaranteed distance of data transfer
     :param max_area: value calculated in calculate_max_area()
@@ -137,6 +125,14 @@ def calculate_max_distance(max_area, angle_width, angle_height):
     max_angle = max(angle_width, angle_height)
     min_angle = min(angle_width, angle_height)
     coefficient = min_angle / max_angle
+
+    if plume_form == 'rectangle':
+        form_coefficient = 1
+        print(f'spotWidth rectangle {coefficient}')
+    elif plume_form == 'ellipse':
+        form_coefficient = 2
+        print(f'spotWidth ellipse {coefficient}')
+
     max_distance = sqrt((max_area / (2 * pi * (1 - cos(max_angle / 2)))) / coefficient)
     return max_distance
 
