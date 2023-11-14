@@ -35,14 +35,14 @@ def index():
         max_distance = calculate_max_distance(max_area, angle_width, angle_height, plume_form)
 
     # module 2
-    min_plume_size = float(data['min_plume_size'])
+    min_plume_size = float(data['minPlumeSize'])
     if min_plume_size != 0:
         min_distance = calculate_distance(min_plume_size, min(angle_width, angle_height))
     else:
         min_distance = 0
 
     # module 3
-    distance_module3 = float(data['distance'])
+    distance_module3 = float(data['distanceModuleThird'])
     if distance_module3 != 0:
         plume_width_module3 = calculate_size(angle_width, distance_module3)
         plume_height_module3 = calculate_size(angle_height, distance_module3)
