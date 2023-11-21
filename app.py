@@ -10,17 +10,12 @@ Swagger(app)
 CORS(app)
 
 
-# module 1 and 4 (API)
-@app.route('/index', methods=['POST'])
-def index():
+@app.route('/2d', methods=['POST'])
+def index2d():
     """
        This is the index API.
        ---
        parameters:
-         - name: distance
-           in: formData
-           type: number
-           required: true
          - name: sensitivity
            in: formData
            type: number
@@ -29,11 +24,19 @@ def index():
            in: formData
            type: number
            required: true
+         - name: plume_form
+           in: formData
+           type: text
+           required: true
          - name: angleWidth
            in: formData
            type: number
            required: true
          - name: angleHeight
+           in: formData
+           type: number
+           required: true
+         - name: distance
            in: formData
            type: number
            required: true
@@ -48,21 +51,21 @@ def index():
        responses:
          200:
            description: Max distance calculation result.
-       """
+    """
 
     data = request.get_json()
+    print(data)
     sensitivity = float(data['sensitivity'])
     power = float(data['power'])
     max_area = calculate_max_area(sensitivity, power)
-    print(data)
+
+    plume_form = data['plumeForm']
 
     if 'angleWidth' and 'angleHeight' in data:
         angle_width = radians(float(data['angleWidth']))
         angle_height = radians(float(data['angleHeight']))
-        max_distance = calculate_max_distance(max_area, angle_width, angle_height)
-        return jsonify({
-            'max_distance': round(max_distance, 2),
-        })
+
+        max_distance = calculate_max_distance(max_area, angle_width, angle_height, plume_form)
 
     elif 'spotWidth' and 'spotHeight' in data:
         distance = float(data['distance'])
@@ -70,91 +73,128 @@ def index():
         plume_height = float(data['spotHeight'])
         angle_width = (calculate_divergence_angle(plume_width, distance))
         angle_height = (calculate_divergence_angle(plume_height, distance))
-        max_distance = calculate_max_distance(max_area, angle_width, angle_height)
+
+        max_distance = calculate_max_distance(max_area, angle_width, angle_height, plume_form)
+
+    # module 2
+    min_plume_size = float(data['minPlumeSize'])
+    if min_plume_size != 0:
+        min_distance = calculate_distance(min_plume_size, min(angle_width, angle_height))
+    else:
+        min_distance = 0
+
+    # module 3
+    distance_module3 = float(data['distanceModuleThird'])
+    if distance_module3 != 0:
+        plume_width_module3 = calculate_size(angle_width, distance_module3)
+        plume_height_module3 = calculate_size(angle_height, distance_module3)
+    else:
+        plume_width_module3 = 0
+        plume_height_module3 = 0
+
+    if 'angleWidth' and 'angleHeight' in data:
+        return jsonify({
+            'max_distance': round(max_distance, 2),
+
+            # module 2
+            'min_distance': round(min_distance, 2),
+
+            # module 3
+            'plume_width': round(plume_width_module3, 2),
+            'plume_height': round(plume_height_module3, 2)
+
+        })
+    elif 'spotWidth' and 'spotHeight' in data:
         return jsonify({
             'angle_width': round(degrees(angle_width), 2),
             'angle_height': round(degrees(angle_height), 2),
             'max_distance': round(max_distance, 2),
-        })
 
+            # module 2
+            'min_distance': round(min_distance, 2),
+
+            # module 3
+            'plume_width_module3': round(plume_width_module3, 2),
+            'plume_height_module3': round(plume_height_module3, 2)
+
+        })
     else:
         return jsonify({
-            'bad_request': 'all fields are filled',
+            'bad_request': 'mistake in filling fields'
         })
 
 
-# API for module 2
-@app.route('/module_2', methods=['POST'])
-def module_2():
-    """
-    This is the module 2 API.
-    ---
-    parameters:
-      - name: min_plume_size
-        in: formData
-        type: number
-        required: true
-      - name: angleWidth
-        in: formData
-        type: number
-        required: true
-      - name: angleHeight
-        in: formData
-        type: number
-        required: true
-    responses:
-      200:
-        description: Minimal distance calculation result.
-    """
-
+@app.route('/3d', methods=['POST'])
+def index3d():
     data = request.get_json()
-    min_plume_size = float(data['min_plume_size'])
-    angle_width = radians(float(data['angleWidth']))
-    angle_height = radians(float(data['angleHeight']))
+    print(data)
+    sensitivity = float(data['sensitivity'])
+    power = float(data['power'])
+    max_area = calculate_max_area(sensitivity, power)
 
-    min_distance = calculate_distance(min_plume_size, min(angle_width, angle_height))
+    plume_form = data['plumeForm']
 
-    return jsonify({
-        'min_distance': round(min_distance, 2)
-    })
+    if 'angleWidth' and 'angleHeight' in data:
+        angle_width = radians(float(data['angleWidth']))
+        angle_height = radians(float(data['angleHeight']))
 
+        max_distance = calculate_max_distance(max_area, angle_width, angle_height, plume_form)
 
-# API for module 3
-@app.route('/module_3', methods=['POST'])
-def module_3():
-    """
-    This is the module 3 API.
-    ---
-    parameters:
-      - name: angleWidth
-        in: formData
-        type: number
-        required: true
-      - name: angleHeight
-        in: formData
-        type: number
-        required: true
-      - name: distance
-        in: formData
-        type: number
-        required: true
-    responses:
-      200:
-        description: Plume width and height calculation result.
-    """
+    elif 'spotWidth' and 'spotHeight' in data:
+        distance = float(data['distance'])
+        plume_width = float(data['spotWidth'])
+        plume_height = float(data['spotHeight'])
+        angle_width = (calculate_divergence_angle(plume_width, distance))
+        angle_height = (calculate_divergence_angle(plume_height, distance))
 
-    data = request.get_json()
-    angle_width = radians(float(data['angleWidth']))
-    angle_height = radians(float(data['angleHeight']))
-    distance = float(data['distance'])
+        max_distance = calculate_max_distance(max_area, angle_width, angle_height, plume_form)
 
-    plume_width = calculate_size(angle_width, distance)
-    plume_height = calculate_size(angle_height, distance)
+    # module 2
+    min_plume_size = float(data['minPlumeSize'])
+    if min_plume_size != 0:
+        min_distance = calculate_distance(min_plume_size, min(angle_width, angle_height))
+    else:
+        min_distance = 0
 
-    return jsonify({
-        'plume_width': round(plume_width, 2),
-        'plume_height': round(plume_height, 2),
-    })
+    # module 3
+    distance_module3 = float(data['distanceModuleThird'])
+    if distance_module3 != 0:
+        plume_width_module3 = calculate_size(angle_width, distance_module3)
+        plume_height_module3 = calculate_size(angle_height, distance_module3)
+    else:
+        plume_width_module3 = calculate_size(angle_width, max_distance)
+        plume_height_module3 = calculate_size(angle_height, max_distance)
+
+    if 'angleWidth' and 'angleHeight' in data:
+        return jsonify({
+            'max_distance': round(max_distance, 2),
+
+            # module 2
+            'min_distance': round(min_distance, 2),
+
+            # module 3
+            'plume_width': round(plume_width_module3, 2),
+            'plume_height': round(plume_height_module3, 2)
+
+        })
+    elif 'spotWidth' and 'spotHeight' in data:
+        return jsonify({
+            'angle_width': round(degrees(angle_width), 2),
+            'angle_height': round(degrees(angle_height), 2),
+            'max_distance': round(max_distance, 2),
+
+            # module 2
+            'min_distance': round(min_distance, 2),
+
+            # module 3
+            'plume_width_module3': round(plume_width_module3, 2),
+            'plume_height_module3': round(plume_height_module3, 2)
+
+        })
+    else:
+        return jsonify({
+            'bad_request': 'mistake in filling fields'
+        })
 
 
 def calculate_divergence_angle(size, distance):
@@ -185,7 +225,7 @@ def calculate_max_area(sensitivity, power):
     return max_area
 
 
-def calculate_max_distance(max_area, angle_width, angle_height):
+def calculate_max_distance(max_area, angle_width, angle_height, plume_form):
     """
     calculate max guaranteed distance of data transfer
     :param max_area: value calculated in calculate_max_area()
@@ -194,13 +234,22 @@ def calculate_max_distance(max_area, angle_width, angle_height):
     :type max_area: float
     :type angle_width: float
     :type angle_height: float
+    :type plume_form: float
     :return: returns a value of max distance
     :rtype: float
     """
     max_angle = max(angle_width, angle_height)
     min_angle = min(angle_width, angle_height)
     coefficient = min_angle / max_angle
-    max_distance = sqrt((max_area / (2 * pi * (1 - cos(max_angle / 2)))) / coefficient)
+
+    if plume_form == 'rectangle':
+        form_coefficient = pi/4
+        print(f'spotWidth rectangle {coefficient}')
+    elif plume_form == 'ellipse':
+        form_coefficient = 1
+        print(f'spotWidth ellipse {coefficient}')
+
+    max_distance = sqrt(((max_area / (2 * pi * (1 - cos(max_angle / 2)))) / coefficient) * form_coefficient)
     return max_distance
 
 

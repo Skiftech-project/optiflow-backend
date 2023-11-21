@@ -21,5 +21,5 @@ pip install -r requirements.txt
 ```
 Для запуску додатку напишіть у консолі
 ```
-python newApp.py
+python app.py
 ```
