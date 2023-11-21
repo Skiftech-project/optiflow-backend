@@ -128,13 +128,13 @@ def calculate_max_distance(max_area, angle_width, angle_height, plume_form):
     coefficient = min_angle / max_angle
 
     if plume_form == 'rectangle':
-        form_coefficient = 1
+        form_coefficient = pi/4
         print(f'spotWidth rectangle {coefficient}')
     elif plume_form == 'ellipse':
-        form_coefficient = 2
+        form_coefficient = 1
         print(f'spotWidth ellipse {coefficient}')
 
-    max_distance = sqrt((max_area / (2 * pi * (1 - cos(max_angle / 2)))) / coefficient)
+    max_distance = sqrt(((max_area / (2 * pi * (1 - cos(max_angle / 2)))) / coefficient) * form_coefficient)
     return max_distance
 
 
