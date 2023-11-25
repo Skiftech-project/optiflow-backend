@@ -92,36 +92,19 @@ def index2d():
         plume_width_module3 = 0
         plume_height_module3 = 0
 
-    if 'angleWidth' and 'angleHeight' in data:
-        return jsonify({
-            'max_distance': round(max_distance, 2),
+    return jsonify({
+        'angle_width': round(degrees(angle_width), 2),
+        'angle_height': round(degrees(angle_height), 2),
+        'max_distance': round(max_distance, 2),
 
-            # module 2
-            'min_distance': round(min_distance, 2),
+        # module 2
+        'min_distance': round(min_distance, 2),
 
-            # module 3
-            'plume_width': round(plume_width_module3, 2),
-            'plume_height': round(plume_height_module3, 2)
+        # module 3
+        'plume_width_module3': round(plume_width_module3, 2),
+        'plume_height_module3': round(plume_height_module3, 2)
 
-        })
-    elif 'spotWidth' and 'spotHeight' in data:
-        return jsonify({
-            'angle_width': round(degrees(angle_width), 2),
-            'angle_height': round(degrees(angle_height), 2),
-            'max_distance': round(max_distance, 2),
-
-            # module 2
-            'min_distance': round(min_distance, 2),
-
-            # module 3
-            'plume_width_module3': round(plume_width_module3, 2),
-            'plume_height_module3': round(plume_height_module3, 2)
-
-        })
-    else:
-        return jsonify({
-            'bad_request': 'mistake in filling fields'
-        })
+    })
 
 
 @app.route('/3d', methods=['POST'])
