@@ -102,7 +102,10 @@ def index2d():
 
         # module 3
         'plume_width_module3': round(plume_width_module3, 2),
-        'plume_height_module3': round(plume_height_module3, 2)
+        'plume_height_module3': round(plume_height_module3, 2),
+
+        # plume
+        'plumeForm': plume_form
 
     })
 
