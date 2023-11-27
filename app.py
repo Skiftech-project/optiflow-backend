@@ -142,14 +142,17 @@ def index3d():
     else:
         min_distance = 0
 
+    plume_width_3d = calculate_size(angle_width, max_distance)
+    plume_height_3d = calculate_size(angle_height, max_distance)
+
     # module 3
     distance_module3 = float(data['distanceModuleThird'])
     if distance_module3 != 0:
         plume_width_module3 = calculate_size(angle_width, distance_module3)
         plume_height_module3 = calculate_size(angle_height, distance_module3)
     else:
-        plume_width_module3 = calculate_size(angle_width, max_distance)
-        plume_height_module3 = calculate_size(angle_height, max_distance)
+        plume_width_module3 = 0
+        plume_height_module3 = 0
 
     if 'angleWidth' and 'angleHeight' in data:
         return jsonify({
@@ -158,9 +161,12 @@ def index3d():
             # module 2
             'min_distance': round(min_distance, 2),
 
+            'plume_width': round(plume_width_3d, 2),
+            'plume_height': round(plume_height_3d, 2),
+
             # module 3
-            'plume_width': round(plume_width_module3, 2),
-            'plume_height': round(plume_height_module3, 2)
+            'plume_width_cut': round(plume_width_module3, 2),
+            'plume_height_cut': round(plume_height_module3, 2)
 
         })
     elif 'spotWidth' and 'spotHeight' in data:
@@ -172,9 +178,12 @@ def index3d():
             # module 2
             'min_distance': round(min_distance, 2),
 
+            'plume_width': round(plume_width_3d, 2),
+            'plume_height': round(plume_height_3d, 2),
+
             # module 3
-            'plume_width_module3': round(plume_width_module3, 2),
-            'plume_height_module3': round(plume_height_module3, 2)
+            'plume_width_cut': round(plume_width_module3, 2),
+            'plume_height_cut': round(plume_height_module3, 2)
 
         })
     else:
