@@ -13,7 +13,7 @@ CORS(app)
 @app.route('/2d', methods=['POST'])
 def index2d():
     """
-       This is the index API.
+       This is the API for calculator.
        ---
        parameters:
          - name: sensitivity
@@ -112,6 +112,46 @@ def index2d():
 
 @app.route('/3d', methods=['POST'])
 def index3d():
+    """
+           This is the API for visual calculator.
+           ---
+           parameters:
+             - name: sensitivity
+               in: formData
+               type: number
+               required: true
+             - name: power
+               in: formData
+               type: number
+               required: true
+             - name: plume_form
+               in: formData
+               type: text
+               required: true
+             - name: angleWidth
+               in: formData
+               type: number
+               required: true
+             - name: angleHeight
+               in: formData
+               type: number
+               required: true
+             - name: distance
+               in: formData
+               type: number
+               required: true
+             - name: spotWidth
+               in: formData
+               type: number
+               required: true
+             - name: spotHeight
+               in: formData
+               type: number
+               required: true
+           responses:
+             200:
+               description: Max distance calculation result.
+        """
     data = request.get_json()
     print(data)
     sensitivity = float(data['sensitivity'])
