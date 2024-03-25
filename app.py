@@ -1,13 +1,83 @@
-from flask import Flask, request, jsonify
 from math import *
+import os
+
 from flasgger import Swagger
+from flask import Flask, jsonify, request
 from flask_cors import CORS
+
+from auth import auth_bp
+from extensions import db, jwt, migrate
+from models import TokenBlockList, User
+from users import user_bp
 
 app = Flask(__name__)
 Swagger(app)
 
 # for working on same ports
 CORS(app)
+
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'secret')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+    'DATABASE_URL', 'sqlite:///database.db')
+app.config['SQLALCHEMY_ECHO'] = bool(os.getenv('SQLALCHEMY_ECHO', 1))
+app.config['FLASK_JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'secret')
+
+# initialize extensions
+db.init_app(app)
+migrate.init_app(app, db)
+jwt.init_app(app)
+
+# register blueprints
+app.register_blueprint(auth_bp, url_prefix='/auth')
+app.register_blueprint(user_bp, url_prefix='/users')
+
+# jwt error handlers
+
+
+@jwt.expired_token_loader
+def expired_token_callback(jwt_header, jwt_data):
+    return jsonify({
+        'message': 'The token has expired.',
+        'error': 'token_expired'
+    }), 401
+
+
+@jwt.invalid_token_loader
+def invalid_token_callback(error):
+    return jsonify({
+        'message': 'Signature verification failed.',
+        'error': 'invalid_token'
+    }), 401
+
+
+@jwt.unauthorized_loader
+def missing_token_callback(error):
+    return jsonify({
+        'message': 'Request does not contain an access token.',
+        'error': 'authorization_header'
+    }), 401
+
+
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    return User.query.filter_by(username=identity).one_or_none()
+
+
+@jwt.additional_claims_loader
+def make_additional_claims(identity):
+    if identity == "user56":
+        return {'is_admin': True}
+    return {'is_admin': False}
+
+
+@jwt.token_in_blocklist_loader
+def token_in_blocklist_callback(jwt_header, jwt_data):
+    jti = jwt_data['jti']
+    token = db.session.query(TokenBlockList).filter(
+        TokenBlockList.jti == jti).scalar()
+
+    return token is not None
 
 
 @app.route('/2d', methods=['POST'])
@@ -65,7 +135,8 @@ def index2d():
         angle_width = radians(float(data['angleWidth']))
         angle_height = radians(float(data['angleHeight']))
 
-        max_distance = calculate_max_distance(max_area, angle_width, angle_height, plume_form)
+        max_distance = calculate_max_distance(
+            max_area, angle_width, angle_height, plume_form)
 
     elif 'spotWidth' and 'spotHeight' in data:
         distance = float(data['distance'])
@@ -74,12 +145,14 @@ def index2d():
         angle_width = (calculate_divergence_angle(plume_width, distance))
         angle_height = (calculate_divergence_angle(plume_height, distance))
 
-        max_distance = calculate_max_distance(max_area, angle_width, angle_height, plume_form)
+        max_distance = calculate_max_distance(
+            max_area, angle_width, angle_height, plume_form)
 
     # module 2
     min_plume_size = float(data['minPlumeSize'])
     if min_plume_size != 0:
-        min_distance = calculate_distance(min_plume_size, min(angle_width, angle_height))
+        min_distance = calculate_distance(
+            min_plume_size, min(angle_width, angle_height))
     else:
         min_distance = 0
 
@@ -164,7 +237,8 @@ def index3d():
         angle_width = radians(float(data['angleWidth']))
         angle_height = radians(float(data['angleHeight']))
 
-        max_distance = calculate_max_distance(max_area, angle_width, angle_height, plume_form)
+        max_distance = calculate_max_distance(
+            max_area, angle_width, angle_height, plume_form)
 
     elif 'spotWidth' and 'spotHeight' in data:
         distance = float(data['distance'])
@@ -173,12 +247,14 @@ def index3d():
         angle_width = (calculate_divergence_angle(plume_width, distance))
         angle_height = (calculate_divergence_angle(plume_height, distance))
 
-        max_distance = calculate_max_distance(max_area, angle_width, angle_height, plume_form)
+        max_distance = calculate_max_distance(
+            max_area, angle_width, angle_height, plume_form)
 
     # module 2
     min_plume_size = float(data['minPlumeSize'])
     if min_plume_size != 0:
-        min_distance = calculate_distance(min_plume_size, min(angle_width, angle_height))
+        min_distance = calculate_distance(
+            min_plume_size, min(angle_width, angle_height))
     else:
         min_distance = 0
 
@@ -284,7 +360,8 @@ def calculate_max_distance(max_area, angle_width, angle_height, plume_form):
         form_coefficient = 1
         print(f'spotWidth ellipse {coefficient}')
 
-    max_distance = sqrt(((max_area / (2 * pi * (1 - cos(max_angle / 2)))) / coefficient) * form_coefficient)
+    max_distance = sqrt(
+        ((max_area / (2 * pi * (1 - cos(max_angle / 2)))) / coefficient) * form_coefficient)
     return max_distance
 
 
