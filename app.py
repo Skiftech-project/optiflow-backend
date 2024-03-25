@@ -1,4 +1,5 @@
 from math import *
+import os
 
 from flasgger import Swagger
 from flask import Flask, jsonify, request
@@ -15,10 +16,11 @@ Swagger(app)
 # for working on same ports
 CORS(app)
 
-app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5433/postgres'
-app.config['SQLALCHEMY_ECHO'] = True
-app.config['FLASK_JWT_SECRET_KEY'] = 'f8e8888797be153d6dff2abf'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'secret')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+    'DATABASE_URL', 'sqlite:///database.db')
+app.config['SQLALCHEMY_ECHO'] = bool(os.getenv('SQLALCHEMY_ECHO', 1))
+app.config['FLASK_JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'secret')
 
 # initialize extensions
 db.init_app(app)
