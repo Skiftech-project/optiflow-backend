@@ -20,6 +20,14 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+Створіть файл .env та напишіть у ньому
+```.env
+SECRET_KEY=<YOUR-SECRET-KEY>
+SQLALCHEMY_DATABASE_URI=<YOUR DATABASE URI>
+SQLALCHEMY_ECHO=<YOUR-ECHO>
+FLASK_JWT_SECRET_KEY=<YOUR-JWT-SECRET-KEY>
+```
+
 Додаток використовує docker. Для того, щоб запустити базу даних в фоновому режимі, пропишіть
 ```
 docker-compose up -d
