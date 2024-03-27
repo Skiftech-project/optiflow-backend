@@ -1,0 +1,39 @@
+This is the API for calculator.
+---
+parameters:
+  - in: body
+    name: body
+    properties:
+      sensitivity:
+        type: number
+        required: true
+      power:
+        type: number
+        required: true
+      plumeForm:
+        type: string
+        required: true
+      angleWidth:
+        type: number
+        required: true
+      angleHeight:
+        type: number
+        required: true
+      distance:
+        type: number
+        required: true
+      spotWidth:
+        type: number
+        required: true
+      spotHeight:
+        type: number
+        required: true
+      minPlumeSize:
+        type: number
+        required: true
+      distanceModuleThird:
+        type: number
+        required: true
+responses:
+  200:
+    description: Max distance calculation result.

@@ -1,7 +1,7 @@
 from math import *
 import os
 
-from flasgger import Swagger
+from flasgger import Swagger, swag_from
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
@@ -11,7 +11,17 @@ from models import TokenBlockList, User
 from users import user_bp
 
 app = Flask(__name__)
-Swagger(app)
+
+template = {
+    "swagger": "2.0",
+    "info": {
+        "title": "Optiflow API",
+        "description": "API for Optiflow Project",
+    },
+    "schemes": ["http", "https"],
+}
+
+Swagger(app, template=template)
 
 # for working on same ports
 CORS(app)
@@ -81,47 +91,8 @@ def token_in_blocklist_callback(jwt_header, jwt_data):
 
 
 @app.route('/2d', methods=['POST'])
+@swag_from('docs/post2d.yml')
 def index2d():
-    """
-       This is the API for calculator.
-       ---
-       parameters:
-         - name: sensitivity
-           in: formData
-           type: number
-           required: true
-         - name: power
-           in: formData
-           type: number
-           required: true
-         - name: plume_form
-           in: formData
-           type: text
-           required: true
-         - name: angleWidth
-           in: formData
-           type: number
-           required: true
-         - name: angleHeight
-           in: formData
-           type: number
-           required: true
-         - name: distance
-           in: formData
-           type: number
-           required: true
-         - name: spotWidth
-           in: formData
-           type: number
-           required: true
-         - name: spotHeight
-           in: formData
-           type: number
-           required: true
-       responses:
-         200:
-           description: Max distance calculation result.
-    """
 
     data = request.get_json()
     print(data)
@@ -184,47 +155,8 @@ def index2d():
 
 
 @app.route('/3d', methods=['POST'])
+@swag_from('docs/post3d.yml')
 def index3d():
-    """
-           This is the API for visual calculator.
-           ---
-           parameters:
-             - name: sensitivity
-               in: formData
-               type: number
-               required: true
-             - name: power
-               in: formData
-               type: number
-               required: true
-             - name: plume_form
-               in: formData
-               type: text
-               required: true
-             - name: angleWidth
-               in: formData
-               type: number
-               required: true
-             - name: angleHeight
-               in: formData
-               type: number
-               required: true
-             - name: distance
-               in: formData
-               type: number
-               required: true
-             - name: spotWidth
-               in: formData
-               type: number
-               required: true
-             - name: spotHeight
-               in: formData
-               type: number
-               required: true
-           responses:
-             200:
-               description: Max distance calculation result.
-        """
     data = request.get_json()
     print(data)
     sensitivity = float(data['sensitivity'])
