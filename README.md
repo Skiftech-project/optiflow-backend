@@ -1,6 +1,8 @@
 # skiftech-backend
 Репозиторій проекту для розробки backend частини додатку.
 
+Документація API: [https://optiflowbackend.azurewebsites.net/apidocs/](https://optiflowbackend.azurewebsites.net/apidocs/)
+
 Для запуску додатку потрібно завантажити бібліотеки
 
 Перед завантаженням бібліотек потрібно створити віртуальне оточення
