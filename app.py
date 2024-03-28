@@ -1,5 +1,5 @@
-from math import *
 import os
+from math import *
 
 from flasgger import Swagger, swag_from
 from flask import Flask, jsonify, request
@@ -10,6 +10,10 @@ from extensions import db, jwt, migrate
 from models import TokenBlockList, User
 from users import user_bp
 
+from dotenv import load_dotenv
+
+# for local
+# load_dotenv()
 app = Flask(__name__)
 
 template = {
@@ -19,6 +23,14 @@ template = {
         "description": "API for Optiflow Project",
     },
     "schemes": ["http", "https"],
+    "securityDefinitions": {
+        "JWT": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT authorization header using the Bearer scheme",
+        }
+    }
 }
 
 Swagger(app, template=template)

@@ -1,0 +1,18 @@
+Logout current user and revoke JWT token.
+---
+summary: Logout current user
+description: Logs out the current user by revoking the JWT token.
+tags:
+  - Auth
+responses:
+  "200":
+    description: JWT token successfully revoked.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Message confirming successful user logout.
+          example: "JWT token successfully revoked."
+security:
+  - JWT: []

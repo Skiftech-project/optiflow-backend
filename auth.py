@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 current_user, get_jwt, get_jwt_identity,
                                 jwt_required)
+from flasgger import swag_from
 
 from models import TokenBlockList, User
 
@@ -9,6 +10,7 @@ auth_bp = Blueprint('auth', __name__)
 
 
 @auth_bp.post('/register')
+@swag_from('docs/register.yml')
 def register_user():
 
     data = request.get_json()
@@ -26,6 +28,7 @@ def register_user():
 
 
 @auth_bp.post('/login')
+@swag_from('docs/login.yml')
 def login_user():
 
     data = request.get_json()
@@ -50,6 +53,7 @@ def login_user():
 
 @auth_bp.get('/whoami')
 @jwt_required()
+@swag_from('docs/whoami.yml')
 def whoami():
     return jsonify({'message': " message", "user_details": {
         "username": current_user.username,
@@ -59,6 +63,7 @@ def whoami():
 
 @auth_bp.get('/refresh')
 @jwt_required(refresh=True)
+@swag_from('docs/refresh.yml')
 def refresh_access():
     identity = get_jwt_identity()
     new_access_token = create_access_token(identity=identity)
@@ -67,6 +72,7 @@ def refresh_access():
 
 @auth_bp.get('/logout')
 @jwt_required(verify_type=False)
+@swag_from('docs/logout.yml')
 def logout_user():
     jwt = get_jwt()
     jti = jwt['jti']

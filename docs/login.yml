@@ -1,0 +1,48 @@
+This is the API for user login.
+---
+summary: Log in User
+description: Logs in a registered user.
+tags:
+  - Auth
+parameters:
+  - in: body
+    name: body
+    description: User login details.
+    required: true
+    schema:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username of the user trying to log in.
+        password:
+          type: string
+          description: Password of the user trying to log in.
+responses:
+  "200":
+    description: User logged in successfully.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Message confirming user login.
+          example: Logged in successfully
+        tokens:
+          type: object
+          properties:
+            access_token:
+              type: string
+              description: Access token for user authentication.
+            refresh_token:
+              type: string
+              description: Refresh token for user authentication.
+  "400":
+    description: Invalid credentials.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message indicating invalid credentials.
+          example: Invalid credentials

@@ -1,5 +1,7 @@
 This is the API for calculator.
 ---
+tags:
+  - Calculator
 parameters:
   - in: body
     name: body

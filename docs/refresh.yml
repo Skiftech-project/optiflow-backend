@@ -1,0 +1,19 @@
+Refresh access token.
+---
+summary: Refresh access token
+description: |
+  Refreshes the access token for the current user using the refresh token.
+  Requires a valid JWT access token with the 'refresh' type in the Authorization header.
+tags:
+  - Auth
+responses:
+  "200":
+    description: New access token generated successfully.
+    schema:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: Newly generated access token.
+security:
+  - JWT: []

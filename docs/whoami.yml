@@ -1,0 +1,32 @@
+Get current user details.
+---
+summary: Get current user details
+description: |
+  Retrieves details of the currently authenticated user.
+  Requires a valid JWT access token in the Authorization header.
+tags:
+  - Auth
+responses:
+  "200":
+    description: User details retrieved successfully.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Message confirming successful retrieval of user details.
+          example: "User details retrieved successfully."
+        user_details:
+          type: object
+          properties:
+            username:
+              type: string
+              description: Username of the authenticated user.
+              example: "example_user"
+            email:
+              type: string
+              description: Email address of the authenticated user.
+              example: "user@example.com"
+security:
+  - JWT: []
+
