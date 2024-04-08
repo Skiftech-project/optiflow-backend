@@ -1,12 +1,15 @@
+from flasgger import swag_from
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 current_user, get_jwt, get_jwt_identity,
                                 jwt_required)
-from flasgger import swag_from
 
 from models import TokenBlockList, User
+from schemas import UserSchema
 
 auth_bp = Blueprint('auth', __name__)
+
+schema = UserSchema()
 
 
 @auth_bp.post('/register')
@@ -14,6 +17,10 @@ auth_bp = Blueprint('auth', __name__)
 def register_user():
 
     data = request.get_json()
+
+    errors = schema.validate(data)
+    if errors:
+        return jsonify({'error': errors}), 400
 
     user = User.get_user_by_username(username=data.get('username'))
 
