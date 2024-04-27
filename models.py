@@ -13,7 +13,7 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.String(), primary_key=True, default=lambda: str(uuid4()))
     username = db.Column(db.String(), nullable=False)
-    email = db.Column(EmailType, nullable=False)
+    email = db.Column(EmailType, nullable=False, unique=True)
     password = db.Column(db.Text())
 
     def __repr__(self):
@@ -55,6 +55,10 @@ class User(db.Model):
     @classmethod
     def get_user_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
+
+    @classmethod
+    def get_user_by_email(cls, email):
+        return cls.query.filter_by(email=email).first()
 
     def save(self):
         db.session.add(self)
