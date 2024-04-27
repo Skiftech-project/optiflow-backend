@@ -1,12 +1,15 @@
+from flasgger import swag_from
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 current_user, get_jwt, get_jwt_identity,
                                 jwt_required)
-from flasgger import swag_from
 
 from models import TokenBlockList, User
+from schemas import UserSchema
 
 auth_bp = Blueprint('auth', __name__)
+
+schema = UserSchema()
 
 
 @auth_bp.post('/register')
@@ -15,7 +18,11 @@ def register_user():
 
     data = request.get_json()
 
-    user = User.get_user_by_username(username=data.get('username'))
+    errors = schema.validate(data)
+    if errors:
+        return jsonify({'error': errors}), 400
+
+    user = User.get_user_by_email(email=data.get('email'))
 
     if user is not None:
         return jsonify({'error': 'User already exists'}), 409
@@ -24,7 +31,15 @@ def register_user():
     new_user.set_password(password=data.get('password'))
     new_user.save()
 
-    return jsonify({'message': 'User created'}), 201
+    access_token = create_access_token(identity=new_user.email)
+    refresh_token = create_refresh_token(identity=new_user.email)
+    return jsonify({
+        "message": "User created and logged in successfully",
+        "tokens": {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+        }
+    }), 201
 
 
 @auth_bp.post('/login')
@@ -33,12 +48,12 @@ def login_user():
 
     data = request.get_json()
 
-    user = User.get_user_by_username(username=data.get('username'))
+    user = User.get_user_by_email(email=data.get('email'))
 
     if user and user.check_password(password=data.get('password')):
 
-        access_token = create_access_token(identity=user.username)
-        refresh_token = create_refresh_token(identity=user.username)
+        access_token = create_access_token(identity=user.email)
+        refresh_token = create_refresh_token(identity=user.email)
         return jsonify({
             "message": "Logged in successfully",
             "tokens": {

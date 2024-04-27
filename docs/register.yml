@@ -32,6 +32,15 @@ responses:
           type: string
           description: Message confirming user creation.
           example: User created.
+        tokens:
+          type: object
+          properties:
+            access_token:
+              type: string
+              description: Access token for user authentication.
+            refresh_token:
+              type: string
+              description: Refresh token for user authentication.
   "409":
     description: User already exists.
     schema:

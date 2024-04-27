@@ -29,4 +29,3 @@ responses:
               example: "user@example.com"
 security:
   - JWT: []
-

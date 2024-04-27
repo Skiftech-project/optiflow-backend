@@ -1,6 +1,7 @@
 import os
 from math import *
 
+from dotenv import load_dotenv
 from flasgger import Swagger, swag_from
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -9,8 +10,6 @@ from auth import auth_bp
 from extensions import db, jwt, migrate
 from models import TokenBlockList, User
 from users import user_bp
-
-from dotenv import load_dotenv
 
 # for local
 # load_dotenv()
