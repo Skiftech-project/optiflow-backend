@@ -35,7 +35,7 @@ template = {
 Swagger(app, template=template)
 
 # for working on same ports
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'secret')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
