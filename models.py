@@ -23,7 +23,7 @@ class User(db.Model):
     def validate_username(self, key, username):
         if not username:
             raise AssertionError('Username is required')
-        if len(username) > 10:
+        if len(username) > 20:
             raise AssertionError('Username must be less than 10 characters')
         elif len(username) < 4:
             raise AssertionError('Username must be more than 4 characters')
