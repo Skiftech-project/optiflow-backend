@@ -40,7 +40,7 @@ class User(db.Model):
     def set_password(self, password):
         if not password:
             raise AssertionError('Password is required')
-        if not re.match('\d.*[A-Z]|[A-Z].*\d', password):
+        if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$', password):
             raise AssertionError(
                 'Password must contain 1 capital letter and 1 number')
         if len(password) < 8 or len(password) > 50:

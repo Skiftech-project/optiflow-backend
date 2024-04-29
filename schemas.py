@@ -6,7 +6,7 @@ from marshmallow import Schema, ValidationError, fields, validate
 def validate_password(password):
     if not password:
         raise ValidationError('Password is required')
-    if not re.match(r'\d.*[A-Z]|[A-Z].*\d', password):
+    if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$', password):
         raise ValidationError(
             'Password must contain 1 capital letter and 1 number')
 
