@@ -31,8 +31,10 @@ def register_user():
     new_user.set_password(password=data.get('password'))
     new_user.save()
 
-    access_token = create_access_token(identity=new_user.email)
-    refresh_token = create_refresh_token(identity=new_user.email)
+    access_token = create_access_token(identity=new_user.email, additional_claims={
+                                       "username": new_user.username})
+    refresh_token = create_refresh_token(identity=new_user.email, additional_claims={
+                                         "username": new_user.username})
     return jsonify({
         "message": "User created and logged in successfully",
         "tokens": {
@@ -52,8 +54,10 @@ def login_user():
 
     if user and user.check_password(password=data.get('password')):
 
-        access_token = create_access_token(identity=user.email)
-        refresh_token = create_refresh_token(identity=user.email)
+        access_token = create_access_token(identity=user.email, additional_claims={
+                                           "username": user.username})
+        refresh_token = create_refresh_token(identity=user.email, additional_claims={
+                                             "username": user.username})
         return jsonify({
             "message": "Logged in successfully",
             "tokens": {

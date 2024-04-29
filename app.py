@@ -82,7 +82,7 @@ def missing_token_callback(error):
 @jwt.user_lookup_loader
 def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
-    return User.query.filter_by(username=identity).one_or_none()
+    return User.query.filter_by(email=identity).one_or_none()
 
 
 @jwt.additional_claims_loader
