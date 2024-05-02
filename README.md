@@ -3,7 +3,7 @@
 
 ## Стек технологій
 
-[![My Skills](https://skillicons.dev/icons?i=js,py,flask,postgres,azure,vite&theme=dark)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=js,py,flask,postgres,azure)](https://skillicons.dev)
 
 ## Почати розробку
 
