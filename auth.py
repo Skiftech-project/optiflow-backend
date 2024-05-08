@@ -93,12 +93,34 @@ def refresh_access():
 @jwt_required(verify_type=False)
 @swag_from('docs/logout.yml')
 def logout_user():
+    identity = get_jwt_identity()
+    user = User.get_user_by_email(email=identity)
+
     jwt = get_jwt()
     jti = jwt['jti']
 
     token_type = jwt['type']
 
     token_b = TokenBlockList(jti=jti)
-    token_b.save()
+    token_b.save(user_id=user.id)
 
     return jsonify({'message': f'{token_type} token revoked successfully'}), 200
+
+
+@auth_bp.delete('/deleteAccount')
+@jwt_required()
+def delete_account():
+    user_email = get_jwt_identity()
+    user = User.get_user_by_email(user_email)
+
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    block_tokens = TokenBlockList.get_token_by_id(user.id)
+
+    for token in block_tokens:
+        token.delete()
+
+    user.delete()
+
+    return jsonify({'message': f'User profile {user.username} deleted successfully'}), 200

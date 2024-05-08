@@ -71,12 +71,22 @@ class User(db.Model):
 
 class TokenBlockList(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.String(), db.ForeignKey(User.id))
     jti = db.Column(db.String(), nullable=False)
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
 
     def __repr__(self):
         return f"<Token {self.jti}>"
 
-    def save(self):
+    def save(self, user_id):
+        self.user_id = user_id
         db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def get_token_by_id(cls, user_id):
+        return cls.query.filter_by(user_id=user_id).all()
+
+    def delete(self):
+        db.session.delete(self)
         db.session.commit()
