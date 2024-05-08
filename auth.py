@@ -109,6 +109,7 @@ def logout_user():
 
 @auth_bp.delete('/deleteAccount')
 @jwt_required()
+@swag_from('docs/delete_profile.yml')
 def delete_account():
     user_email = get_jwt_identity()
     user = User.get_user_by_email(user_email)

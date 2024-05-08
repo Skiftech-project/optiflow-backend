@@ -1,0 +1,26 @@
+Delete user account and revoke associated tokens.
+---
+summary: Delete user account
+description: Deletes the user account and revokes all associated JWT tokens.
+tags:
+  - Auth
+responses:
+  "200":
+    description: User account successfully deleted.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Message confirming successful deletion of user account.
+          example: "User profile deleted successfully."
+  "404":
+    description: User not found.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message indicating user not found.
+security:
+  - JWT: []
