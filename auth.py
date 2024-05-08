@@ -52,22 +52,24 @@ def login_user():
 
     user = User.get_user_by_email(email=data.get('email'))
 
-    if user and user.check_password(password=data.get('password')):
+    if not user:
+        return jsonify({'error': 'User with this email is not registered'}), 404
 
-        access_token = create_access_token(identity=user.email, additional_claims={
-                                           "username": user.username})
-        refresh_token = create_refresh_token(identity=user.email, additional_claims={
-                                             "username": user.username})
-        return jsonify({
-            "message": "Logged in successfully",
-            "tokens": {
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-            }
+    if not user.check_password(password=data.get('password')):
+        return jsonify({'error': 'Invalid password'}), 400
 
-        }), 200
+    access_token = create_access_token(identity=user.email, additional_claims={
+        "username": user.username})
+    refresh_token = create_refresh_token(identity=user.email, additional_claims={
+        "username": user.username})
+    return jsonify({
+        "message": "Logged in successfully",
+        "tokens": {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+        }
 
-    return jsonify({'error': 'Invalid credentials'}), 400
+    }), 200
 
 
 @auth_bp.get('/whoami')

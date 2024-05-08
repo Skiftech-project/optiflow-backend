@@ -8,7 +8,7 @@ def validate_password(password):
         raise ValidationError('Password is required')
     if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$', password):
         raise ValidationError(
-            'Password must contain 1 capital letter and 1 number')
+            'Password must contain 1 capital letter, 1 number and 1 special symbol')
 
 
 class UserSchema(Schema):

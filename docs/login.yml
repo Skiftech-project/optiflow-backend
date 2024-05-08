@@ -37,12 +37,21 @@ responses:
             refresh_token:
               type: string
               description: Refresh token for user authentication.
-  "400":
-    description: Invalid credentials.
+  "404":
+    description: User not found.
     schema:
       type: object
       properties:
         error:
           type: string
-          description: Error message indicating invalid credentials.
-          example: Invalid credentials
+          description: Error message indicating user not found.
+          example: User with this email is not registered
+  "400":
+    description: Invalid password.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message indicating invalid password.
+          example: Invalid password
