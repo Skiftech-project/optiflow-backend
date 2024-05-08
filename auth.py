@@ -127,3 +127,58 @@ def delete_account():
     user.delete()
 
     return jsonify({'message': f'User profile {user.username} deleted successfully'}), 200
+
+
+@auth_bp.put('/updateProfile')
+@jwt_required()
+@swag_from('docs/update_profile.yml')
+def update_user_profile():
+    user_email = get_jwt_identity()
+    user = User.get_user_by_email(user_email)
+    
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+    
+    if 'username' in data:
+        new_username = data.get("username")
+        try:
+            user.validate_username('username', new_username)
+        except AssertionError as e:
+            return jsonify({'error': str(e)}), 400
+        user.username = new_username
+
+    if 'email' in data:
+        new_email = data.get("email")
+        try:
+            user.validate_email('email', new_email)
+        except AssertionError as e:
+            return jsonify({'error': str(e)}), 400
+        user.email = new_email
+
+    if 'password' in data:
+        new_password = data.get("password")
+        try:
+            user.set_password(new_password)
+        except AssertionError as e:
+            return jsonify({'error': str(e)}), 400
+    
+    user.save()
+    
+    # Обновляем токены
+    access_token = create_access_token(identity=user.email, additional_claims={
+                                       "username": user.username})
+    refresh_token = create_refresh_token(identity=user.email, additional_claims={
+                                         "username": user.username})
+    
+    return jsonify({
+        'message': 'User profile updated successfully',
+        'tokens': {
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }
+    }), 200

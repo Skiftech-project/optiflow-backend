@@ -6,6 +6,12 @@ description: |
   Requires a valid JWT access token in the Authorization header.
 tags:
   - Auth
+parameters:
+  - in: header
+    name: Authorization
+    type: string
+    required: true
+    description: JWT token obtained during authentication.
 responses:
   "200":
     description: User details retrieved successfully.

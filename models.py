@@ -24,7 +24,7 @@ class User(db.Model):
         if not username:
             raise AssertionError('Username is required')
         if len(username) > 20:
-            raise AssertionError('Username must be less than 10 characters')
+            raise AssertionError('Username must be less than 20 characters')
         elif len(username) < 4:
             raise AssertionError('Username must be more than 4 characters')
         return username
@@ -37,15 +37,30 @@ class User(db.Model):
             raise AssertionError('Invalid email address')
         return email
 
-    def set_password(self, password):
-        if not password:
-            raise AssertionError('Password is required')
-        if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$', password):
-            raise AssertionError(
-                'Password must contain 1 capital letter and 1 number')
-        if len(password) < 8 or len(password) > 50:
-            raise AssertionError(
-                'Password must be between 8 and 50 characters')
+    def set_password(self, password):  
+        errors = {}
+        
+        if len(password) < 8:
+            errors['length'] = 'Password must be at least 8 characters long'
+        if len(password) > 50:
+            errors['length'] = 'Password must not exceed 50 characters'
+
+        if not re.match(r'^(?=.*[a-z])', password):
+            errors['lowercase'] = 'Password must contain at least one lowercase letter'
+
+        if not re.match(r'^(?=.*[A-Z])', password):
+            errors['uppercase'] = 'Password must contain at least one uppercase letter'
+
+        if not re.match(r'^(?=.*\d)', password):
+            errors['digit'] = 'Password must contain at least one digit'
+
+        if not re.match(r'^(?=.*[@$!%*?&])', password):
+            errors['special'] = 'Password must contain at least one special character'
+            
+            
+        if errors:
+            raise AssertionError(errors)
+        
 
         self.password = generate_password_hash(password)
 

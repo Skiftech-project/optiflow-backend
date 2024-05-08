@@ -4,6 +4,12 @@ summary: Logout current user
 description: Logs out the current user by revoking the JWT token.
 tags:
   - Auth
+parameters:
+  - in: header
+    name: Authorization
+    type: string
+    required: true
+    description: JWT token obtained during authentication.
 responses:
   "200":
     description: JWT token successfully revoked.

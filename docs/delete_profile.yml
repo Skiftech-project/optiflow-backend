@@ -4,6 +4,12 @@ summary: Delete user account
 description: Deletes the user account and revokes all associated JWT tokens.
 tags:
   - Auth
+parameters:
+  - in: header
+    name: Authorization
+    type: string
+    required: true
+    description: JWT token obtained during authentication.
 responses:
   "200":
     description: User account successfully deleted.

@@ -4,11 +4,27 @@ from marshmallow import Schema, ValidationError, fields, validate
 
 
 def validate_password(password):
-    if not password:
-        raise ValidationError('Password is required')
-    if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$', password):
-        raise ValidationError(
-            'Password must contain 1 capital letter, 1 number and 1 special symbol')
+    
+    errors = {}
+    if len(password) < 8:
+        errors['length'] = 'Password must be at least 8 characters long'
+    if len(password) > 50:
+        errors['length'] = 'Password must not exceed 50 characters'
+
+    if not re.match(r'^(?=.*[a-z])', password):
+        errors['lowercase'] = 'Password must contain at least one lowercase letter'
+
+    if not re.match(r'^(?=.*[A-Z])', password):
+        errors['uppercase'] = 'Password must contain at least one uppercase letter'
+
+    if not re.match(r'^(?=.*\d)', password):
+        errors['digit'] = 'Password must contain at least one digit'
+
+    if not re.match(r'^(?=.*[@$!%*?&])', password):
+        errors['special'] = 'Password must contain at least one special character'
+        
+    if errors:
+        raise ValidationError(errors)
 
 
 class UserSchema(Schema):
@@ -16,5 +32,4 @@ class UserSchema(Schema):
     username = fields.String(
         required=True, validate=validate.Length(min=4, max=20))
     email = fields.Email(required=True)
-    password = fields.String(required=True, validate=[
-                             validate.Length(min=5, max=50), validate_password])
+    password = fields.String(required=True, validate=validate_password)
