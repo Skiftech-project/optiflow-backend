@@ -1,5 +1,11 @@
-# skiftech-backend
+# Optiflow - Server
 Репозиторій проекту для розробки backend частини додатку.
+
+## Стек технологій
+
+[![My Skills](https://skillicons.dev/icons?i=py,flask,postgres,azure)](https://skillicons.dev)
+
+## Почати розробку
 
 Документація API: [https://optiflowbackend.azurewebsites.net/apidocs/](https://optiflowbackend.azurewebsites.net/apidocs/)
 
