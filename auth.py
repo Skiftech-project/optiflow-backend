@@ -189,19 +189,20 @@ def whoami():
 
 
 @auth_bp.post('/sendResetEmail')
+@swag_from('docs/send_reset_email.yml')
 def send_restore_email():
     data = request.get_json()
     user = User.get_user_by_email(email=data.get('email'))
 
     if not user:
-        return jsonify({'error': 'User not found'}), 404
+        return jsonify({'error': 'User with this email is not registered'}), 404
     
     
     expires = datetime.timedelta(minutes=10)
     access_token = create_access_token(identity=user.email, expires_delta=expires)
     
     restore_link = f"http://localhost:5000/reset-password/{access_token}"
-    # confirmation_link = f"{domen}:{port}/reset-password/{access_token}"
+    # restore_link = f"{domen}:{port}/reset-password/{access_token}"
     
     
     recipient_email = user.email

@@ -1,0 +1,48 @@
+summary: Get All Templates
+description: Retrieves all calculation templates.
+tags:
+  - Templates
+responses:
+  "200":
+    description: Templates retrieved successfully.
+    schema:
+      type: object
+      properties:
+        templates:
+          type: array
+          items:
+            type: object
+            properties:
+              template_name:
+                type: string
+                description: Name of the template.
+              sensitivity:
+                type: string
+                description: Sensitivity of the template.
+              power:
+                type: string
+                description: Power of the template.
+              plume_form:
+                type: string
+                description: Plume form of the template.
+              angle_width:
+                type: string
+                description: Angle width of the template.
+              angle_height:
+                type: string
+                description: Angle height of the template.
+              distance:
+                type: string
+                description: Distance of the template.
+              spot_width:
+                type: string
+                description: Spot width of the template.
+              spot_height:
+                type: string
+                description: Spot height of the template.
+              min_plume_size:
+                type: string
+                description: Minimum plume size of the template.
+              distance_for_plume_size:
+                type: string
+                description: Distance for plume size of the template.

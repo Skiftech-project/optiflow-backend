@@ -1,0 +1,51 @@
+summary: Send Password Reset Email
+description: Sends a password reset email to a registered user.
+tags:
+  - Auth
+parameters:
+  - in: body
+    name: body
+    description: User email for sending password reset link.
+    required: true
+    schema:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email of the user requesting password reset.
+responses:
+  "200":
+    description: Email sent successfully.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Message confirming email sent successfully.
+          example: Email sent successfully
+        details:
+          type: object
+          properties:
+            confirmation_link:
+              type: string
+              description: Link for password reset confirmation.
+            email:
+              type: string
+              description: Email address the email was sent to.
+  "404":
+    description: User with this email is not registered.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message indicating user with this email is not registered.
+          example: User with this email is not registered
+  "500":
+    description: Error occurred while sending email.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message indicating email sending failure.
