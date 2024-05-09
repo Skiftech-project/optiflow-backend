@@ -115,7 +115,7 @@ class CalculationTemplate(db.Model):
     sensitivity = db.Column(db.Float(), nullable=False)
     power = db.Column(db.Float(), nullable=False)
 
-    plume_form = db.Column(db.String(), nullable=False) # ToDo: 2 values only: Ellipse/Rectangle 
+    plume_form = db.Column(db.String(), nullable=False)
 
     angle_width = db.Column(db.Float(), nullable=True)
     angle_height = db.Column(db.Float(), nullable=True)
@@ -138,7 +138,7 @@ class CalculationTemplate(db.Model):
         db.session.commit()
 
     @classmethod
-    def get_template_by_name(cls, name):
-        return cls.query.filter_by(template_name=name).first()
+    def get_all_templates(cls):
+        return cls.query.all()
 
     
