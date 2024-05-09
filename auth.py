@@ -1,3 +1,8 @@
+import datetime
+import os
+import smtplib
+from email.mime.text import MIMEText
+
 from flasgger import swag_from
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import (create_access_token, create_refresh_token,
@@ -8,7 +13,6 @@ from models import TokenBlockList, User
 from schemas import UserSchema
 
 auth_bp = Blueprint('auth', __name__)
-
 schema = UserSchema()
 
 
@@ -72,16 +76,6 @@ def login_user():
     }), 200
 
 
-@auth_bp.get('/whoami')
-@jwt_required()
-@swag_from('docs/whoami.yml')
-def whoami():
-    return jsonify({'message': " message", "user_details": {
-        "username": current_user.username,
-        "email": current_user.email,
-    }}), 200
-
-
 @auth_bp.get('/refresh')
 @jwt_required(refresh=True)
 @swag_from('docs/refresh.yml')
@@ -89,44 +83,6 @@ def refresh_access():
     identity = get_jwt_identity()
     new_access_token = create_access_token(identity=identity)
     return jsonify({"access_token": new_access_token})
-
-
-@auth_bp.get('/logout')
-@jwt_required(verify_type=False)
-@swag_from('docs/logout.yml')
-def logout_user():
-    identity = get_jwt_identity()
-    user = User.get_user_by_email(email=identity)
-
-    jwt = get_jwt()
-    jti = jwt['jti']
-
-    token_type = jwt['type']
-
-    token_b = TokenBlockList(jti=jti)
-    token_b.save(user_id=user.id)
-
-    return jsonify({'message': f'{token_type} token revoked successfully'}), 200
-
-
-@auth_bp.delete('/deleteAccount')
-@jwt_required()
-@swag_from('docs/delete_profile.yml')
-def delete_account():
-    user_email = get_jwt_identity()
-    user = User.get_user_by_email(user_email)
-
-    if not user:
-        return jsonify({'error': 'User not found'}), 404
-
-    block_tokens = TokenBlockList.get_token_by_id(user.id)
-
-    for token in block_tokens:
-        token.delete()
-
-    user.delete()
-
-    return jsonify({'message': f'User profile {user.username} deleted successfully'}), 200
 
 
 @auth_bp.put('/updateProfile')
@@ -182,3 +138,93 @@ def update_user_profile():
             'refresh_token': refresh_token
         }
     }), 200
+
+
+@auth_bp.get('/logout')
+@jwt_required(verify_type=False)
+@swag_from('docs/logout.yml')
+def logout_user():
+    identity = get_jwt_identity()
+    user = User.get_user_by_email(email=identity)
+
+    jwt = get_jwt()
+    jti = jwt['jti']
+
+    token_type = jwt['type']
+
+    token_b = TokenBlockList(jti=jti)
+    token_b.save(user_id=user.id)
+
+    return jsonify({'message': f'{token_type} token revoked successfully'}), 200
+
+
+@auth_bp.delete('/deleteAccount')
+@jwt_required()
+@swag_from('docs/delete_profile.yml')
+def delete_account():
+    user_email = get_jwt_identity()
+    user = User.get_user_by_email(user_email)
+
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    block_tokens = TokenBlockList.get_token_by_id(user.id)
+
+    for token in block_tokens:
+        token.delete()
+
+    user.delete()
+
+    return jsonify({'message': f'User profile {user.username} deleted successfully'}), 200
+
+
+@auth_bp.get('/whoami')
+@jwt_required()
+@swag_from('docs/whoami.yml')
+def whoami():
+    return jsonify({'message': " message", "user_details": {
+        "username": current_user.username,
+        "email": current_user.email,
+    }}), 200
+
+
+@auth_bp.post('/sendResetEmail')
+def send_restore_email():
+    data = request.get_json()
+    user = User.get_user_by_email(email=data.get('email'))
+
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    
+    expires = datetime.timedelta(minutes=10)
+    access_token = create_access_token(identity=user.email, expires_delta=expires)
+    
+    restore_link = f"http://localhost:5000/reset-password/{access_token}"
+    # confirmation_link = f"{domen}:{port}/reset-password/{access_token}"
+    
+    
+    recipient_email = user.email
+    sender_email = os.getenv('SENDER_EMAIL')
+    sender_password = os.getenv('SENDER_PASSWORD')
+    
+    
+    message = MIMEText(f'Для зміни пароля перейдіть за посиланням: {restore_link}')
+    message['Subject'] = 'Password recovery'
+    message['From'] = sender_email
+    message['To'] = recipient_email
+    
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, recipient_email, message.as_string())
+        server.quit()
+        return jsonify({'message': "Email sent successfully", "details": {
+            "confirmation_link": restore_link,
+            "email": user.email,
+        }}), 200
+    except Exception as e:
+        return jsonify({'error': f"An error occurred: {str(e)}"}), 500
+
+

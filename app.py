@@ -9,8 +9,8 @@ from flask_cors import CORS
 from auth import auth_bp
 from extensions import db, jwt, migrate
 from models import TokenBlockList, User
-from users import user_bp
 from templates import template_bp
+from users import user_bp
 
 # for local
 # load_dotenv()
@@ -44,10 +44,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
 app.config['SQLALCHEMY_ECHO'] = bool(os.getenv('SQLALCHEMY_ECHO', 1))
 app.config['FLASK_JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'secret')
 
+
 # initialize extensions
 db.init_app(app)
 migrate.init_app(app, db)
 jwt.init_app(app)
+
 
 # register blueprints
 app.register_blueprint(auth_bp, url_prefix='/auth')

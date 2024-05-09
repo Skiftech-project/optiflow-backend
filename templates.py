@@ -1,7 +1,7 @@
 from flasgger import swag_from
 from flask import Blueprint, jsonify, request
-from models import CalculationTemplate
 
+from models import CalculationTemplate
 
 template_bp = Blueprint('template', __name__)
 
