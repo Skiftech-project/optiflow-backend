@@ -85,6 +85,7 @@ class User(db.Model):
 
 
 class TokenBlockList(db.Model):
+    __tablename__ = 'token_block_list'
     id = db.Column(db.Integer(), primary_key=True)
     user_id = db.Column(db.String(), db.ForeignKey(User.id))
     jti = db.Column(db.String(), nullable=False)
@@ -105,3 +106,39 @@ class TokenBlockList(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+        
+        
+        
+class CalculationTemplate(db.Model):
+    __tablename__ = 'calculation_templates'
+    template_name = db.Column(db.String(), primary_key=True)
+    sensitivity = db.Column(db.Float(), nullable=False)
+    power = db.Column(db.Float(), nullable=False)
+
+    plume_form = db.Column(db.String(), nullable=False) # ToDo: 2 values only: Ellipse/Rectangle 
+
+    angle_width = db.Column(db.Float(), nullable=True)
+    angle_height = db.Column(db.Float(), nullable=True)
+
+    distance = db.Column(db.Float(), nullable=True)
+    spot_width = db.Column(db.Float(), nullable=True)
+    spot_height = db.Column(db.Float(), nullable=True)
+    min_plume_size = db.Column(db.Float(), nullable=True)
+    distance_for_plume_size = db.Column(db.Float(), nullable=True)
+    
+    def __repr__(self):
+        return f"<Template {self.template_name}>"
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+        
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    @classmethod
+    def get_template_by_name(cls, name):
+        return cls.query.filter_by(template_name=name).first()
+
+    

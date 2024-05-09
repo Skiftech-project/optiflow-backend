@@ -139,10 +139,10 @@ def index2d():
         min_distance = 0
 
     # module 3
-    distance_module3 = float(data['distanceModuleThird'])
-    if distance_module3 != 0:
-        plume_width_module3 = calculate_size(angle_width, distance_module3)
-        plume_height_module3 = calculate_size(angle_height, distance_module3)
+    distance_for_plume_size = float(data['distanceModuleThird'])
+    if distance_for_plume_size != 0:
+        plume_width_module3 = calculate_size(angle_width, distance_for_plume_size)
+        plume_height_module3 = calculate_size(angle_height, distance_for_plume_size)
     else:
         plume_width_module3 = 0
         plume_height_module3 = 0
@@ -205,10 +205,10 @@ def index3d():
     plume_height_3d = calculate_size(angle_height, max_distance)
 
     # module 3
-    distance_module3 = float(data['distanceModuleThird'])
-    if distance_module3 != 0:
-        plume_width_module3 = calculate_size(angle_width, distance_module3)
-        plume_height_module3 = calculate_size(angle_height, distance_module3)
+    distance_for_plume_size = float(data['distanceModuleThird'])
+    if distance_for_plume_size != 0:
+        plume_width_module3 = calculate_size(angle_width, distance_for_plume_size)
+        plume_height_module3 = calculate_size(angle_height, distance_for_plume_size)
     else:
         plume_width_module3 = 0
         plume_height_module3 = 0
