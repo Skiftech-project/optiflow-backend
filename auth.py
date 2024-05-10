@@ -189,22 +189,7 @@ def whoami():
     }}), 200
 
 
-@auth_bp.post('/sendResetEmail')
-@swag_from('docs/Auth/send_reset_email.yml')
-def send_restore_email():
-    data = request.get_json()
-    user = User.get_user_by_email(email=data.get('email'))
-
-    if not user:
-        return jsonify({'error': 'User with this email is not registered'}), 404
-
-    expires = datetime.timedelta(minutes=10)
-    access_token = create_access_token(
-        identity=user.email, expires_delta=expires)
-
-    restore_link = f"http://localhost:5000/reset-password/{access_token}"
-    # restore_link = f"{domen}:{port}/reset-password/{access_token}"
-
+def send_email(user, restore_link):
     recipient_email = user.email
     sender_email = os.getenv('SENDER_EMAIL')
     sender_password = os.getenv('SENDER_PASSWORD')
@@ -221,12 +206,35 @@ def send_restore_email():
         server.login(sender_email, sender_password)
         server.sendmail(sender_email, recipient_email, message.as_string())
         server.quit()
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
+@auth_bp.post('/sendResetEmail')
+@swag_from('docs/Auth/send_reset_email.yml')
+def send_restore_email():
+    data = request.get_json()
+    user = User.get_user_by_email(email=data.get('email'))
+
+    if not user:
+        return jsonify({'error': 'User with this email is not registered'}), 404
+
+    expires = datetime.timedelta(minutes=10)
+    access_token = create_access_token(
+        identity=user.email, expires_delta=expires)
+
+    restore_link = f"http://localhost:5000/reset-password/{access_token}"
+    # restore_link = f"{domen}:{port}/reset-password/{access_token}"
+
+    if send_email(user, restore_link):
         return jsonify({'message': "Email sent successfully", "details": {
             "confirmation_link": restore_link,
             "email": user.email,
         }}), 200
-    except Exception as e:
-        return jsonify({'error': f"An error occurred: {str(e)}"}), 500
+    else:
+        return jsonify({'error': "An error occurred while sending the email"}), 500
 
 
 @auth_bp.put('/restorePassword')
