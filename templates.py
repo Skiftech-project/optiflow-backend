@@ -7,7 +7,7 @@ template_bp = Blueprint('template', __name__)
 
 
 @template_bp.get('/getAllTemplates')
-@swag_from('docs/get_all_templates.yml')
+@swag_from('docs/Template/get_all_templates.yml')
 def get_all_templates():
     all_templates = CalculationTemplate.get_all_templates()
     templates_data = []

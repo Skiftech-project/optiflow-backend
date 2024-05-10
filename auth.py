@@ -18,7 +18,7 @@ schema = UserSchema()
 
 
 @auth_bp.post('/register')
-@swag_from('docs/register.yml')
+@swag_from('docs/Auth/register.yml')
 def register_user():
 
     data = request.get_json()
@@ -50,7 +50,7 @@ def register_user():
 
 
 @auth_bp.post('/login')
-@swag_from('docs/login.yml')
+@swag_from('docs/Auth/login.yml')
 def login_user():
 
     data = request.get_json()
@@ -79,7 +79,7 @@ def login_user():
 
 @auth_bp.get('/refresh')
 @jwt_required(refresh=True)
-@swag_from('docs/refresh.yml')
+@swag_from('docs/Auth/refresh.yml')
 def refresh_access():
     identity = get_jwt_identity()
     new_access_token = create_access_token(identity=identity)
@@ -88,7 +88,7 @@ def refresh_access():
 
 @auth_bp.put('/updateProfile')
 @jwt_required()
-@swag_from('docs/update_profile.yml')
+@swag_from('docs/Auth/update_profile.yml')
 def update_user_profile():
     user_email = get_jwt_identity()
     user = User.get_user_by_email(email=user_email)
@@ -143,7 +143,7 @@ def update_user_profile():
 
 @auth_bp.get('/logout')
 @jwt_required(verify_type=False)
-@swag_from('docs/logout.yml')
+@swag_from('docs/Auth/logout.yml')
 def logout_user():
     identity = get_jwt_identity()
     user = User.get_user_by_email(email=identity)
@@ -161,7 +161,7 @@ def logout_user():
 
 @auth_bp.delete('/deleteAccount')
 @jwt_required()
-@swag_from('docs/delete_profile.yml')
+@swag_from('docs/Auth/delete_profile.yml')
 def delete_account():
     user_email = get_jwt_identity()
     user = User.get_user_by_email(user_email)
@@ -181,7 +181,7 @@ def delete_account():
 
 @auth_bp.get('/whoami')
 @jwt_required()
-@swag_from('docs/whoami.yml')
+@swag_from('docs/Auth/whoami.yml')
 def whoami():
     return jsonify({'message': " message", "user_details": {
         "username": current_user.username,
@@ -190,7 +190,7 @@ def whoami():
 
 
 @auth_bp.post('/sendResetEmail')
-@swag_from('docs/send_reset_email.yml')
+@swag_from('docs/Auth/send_reset_email.yml')
 def send_restore_email():
     data = request.get_json()
     user = User.get_user_by_email(email=data.get('email'))
@@ -232,7 +232,7 @@ def send_restore_email():
 
 @auth_bp.put('/restorePassword')
 @jwt_required()
-@swag_from('docs/restore_password.yml')
+@swag_from('docs/Auth/restore_password.yml')
 def restore_password():
     data = request.get_json()
     user_email = get_jwt_identity()

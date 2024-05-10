@@ -106,7 +106,7 @@ def token_in_blocklist_callback(jwt_header, jwt_data):
 
 
 @app.route('/2d', methods=['POST'])
-@swag_from('docs/post2d.yml')
+@swag_from('docs/Calculators/post2d.yml')
 def index2d():
 
     data = request.get_json()
@@ -170,7 +170,7 @@ def index2d():
 
 
 @app.route('/3d', methods=['POST'])
-@swag_from('docs/post3d.yml')
+@swag_from('docs/Calculators/post3d.yml')
 def index3d():
     data = request.get_json()
     print(data)
