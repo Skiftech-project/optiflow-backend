@@ -56,12 +56,12 @@ responses:
           type: string
           description: Error message indicating the reason for the bad request.
   "404":
-    description: User not found.
+    description: User with this email is not registered.
     schema:
       type: object
       properties:
         error:
           type: string
-          description: Error message indicating user not found.
+          description: Error message indicating user with this email is not registered.
 security:
   - JWT: []

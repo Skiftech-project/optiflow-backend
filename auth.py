@@ -10,11 +10,20 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 jwt_required)
 
 from models import TokenBlockList, User
-from schemas import UserSchema, validate_password
-from marshmallow import  ValidationError
+from schemas import UserSchema, validate_password, UserUpdateSchema
+from marshmallow import ValidationError
 
 auth_bp = Blueprint('auth', __name__)
 schema = UserSchema()
+update_schema = UserUpdateSchema()
+
+
+def create_access_and_refresh_tokens(user):
+    access_token = create_access_token(identity=user.email, additional_claims={
+                                       "username": user.username})
+    refresh_token = create_refresh_token(identity=user.email, additional_claims={
+                                         "username": user.username})
+    return access_token, refresh_token
 
 
 @auth_bp.post('/register')
@@ -36,10 +45,8 @@ def register_user():
     new_user.set_password(password=data.get('password'))
     new_user.save()
 
-    access_token = create_access_token(identity=new_user.email, additional_claims={
-                                       "username": new_user.username})
-    refresh_token = create_refresh_token(identity=new_user.email, additional_claims={
-                                         "username": new_user.username})
+    access_token, refresh_token = create_access_and_refresh_tokens(new_user)
+
     return jsonify({
         "message": "User created and logged in successfully",
         "tokens": {
@@ -63,10 +70,8 @@ def login_user():
     if not user.check_password(password=data.get('password')):
         return jsonify({'error': 'Invalid password'}), 400
 
-    access_token = create_access_token(identity=user.email, additional_claims={
-        "username": user.username})
-    refresh_token = create_refresh_token(identity=user.email, additional_claims={
-        "username": user.username})
+    access_token, refresh_token = create_access_and_refresh_tokens(user)
+
     return jsonify({
         "message": "Logged in successfully",
         "tokens": {
@@ -81,57 +86,52 @@ def login_user():
 @jwt_required(refresh=True)
 @swag_from('docs/Auth/refresh.yml')
 def refresh_access():
-    identity = get_jwt_identity()
-    new_access_token = create_access_token(identity=identity)
+    user_email = get_jwt_identity()
+    new_access_token = create_access_token(identity=user_email)
     return jsonify({"access_token": new_access_token})
 
 
-@auth_bp.put('/updateProfile')
-@jwt_required()
-@swag_from('docs/Auth/update_profile.yml')
-def update_user_profile():
-    user_email = get_jwt_identity()
-    user = User.get_user_by_email(email=user_email)
-    
-    if not user:
-        return jsonify({'error': 'User not found'}), 404
-    
-    data = request.get_json()
-    
-    if not data:
-        return jsonify({'error': 'No data provided'}), 400
-    
+def update_data(user, data):
     if 'username' in data:
         new_username = data.get("username")
-        try:
-            user.validate_username('username', new_username)
-        except AssertionError as e:
-            return jsonify({'error': str(e)}), 400
         user.username = new_username
 
     if 'email' in data:
         new_email = data.get("email")
-        try:
-            user.validate_email('email', new_email)
-        except AssertionError as e:
-            return jsonify({'error': str(e)}), 400
         user.email = new_email
 
     if 'password' in data:
         new_password = data.get("password")
-        try:
-            user.set_password(new_password)
-        except AssertionError as e:
-            return jsonify({'error': str(e)}), 400
-    
+        user.set_password(new_password)
+
+
+@auth_bp.put('/updateProfile')
+@jwt_required()
+@swag_from('docs/update_profile.yml')
+def update_user_profile():
+    user_email = get_jwt_identity()
+    user = User.get_user_by_email(user_email)
+
+    if not user:
+        return jsonify({'error': 'User with this email is not registered'}), 404
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+
+    errors = update_schema.validate(data)
+
+    if errors:
+        return jsonify({'error': errors}), 400
+
+    update_data(user, data)
+
     user.save()
-    
+
     # Обновляем токены
-    access_token = create_access_token(identity=user.email, additional_claims={
-                                       "username": user.username})
-    refresh_token = create_refresh_token(identity=user.email, additional_claims={
-                                         "username": user.username})
-    
+    access_token, refresh_token = create_access_and_refresh_tokens(user)
+
     return jsonify({
         'message': 'User profile updated successfully',
         'tokens': {
@@ -167,7 +167,7 @@ def delete_account():
     user = User.get_user_by_email(user_email)
 
     if not user:
-        return jsonify({'error': 'User not found'}), 404
+        return jsonify({'error': 'User with this email is not registered'}), 404
 
     block_tokens = TokenBlockList.get_token_by_id(user.id)
 
@@ -189,6 +189,29 @@ def whoami():
     }}), 200
 
 
+def send_email(user, restore_link):
+    recipient_email = user.email
+    sender_email = os.getenv('SENDER_EMAIL')
+    sender_password = os.getenv('SENDER_PASSWORD')
+
+    message = MIMEText(
+        f'Для зміни пароля перейдіть за посиланням: {restore_link}')
+    message['Subject'] = 'Password recovery'
+    message['From'] = sender_email
+    message['To'] = recipient_email
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, recipient_email, message.as_string())
+        server.quit()
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
 @auth_bp.post('/sendResetEmail')
 @swag_from('docs/Auth/send_reset_email.yml')
 def send_restore_email():
@@ -197,37 +220,21 @@ def send_restore_email():
 
     if not user:
         return jsonify({'error': 'User with this email is not registered'}), 404
-    
-    
+
     expires = datetime.timedelta(minutes=10)
-    access_token = create_access_token(identity=user.email, expires_delta=expires)
-    
+    access_token = create_access_token(
+        identity=user.email, expires_delta=expires)
+
     restore_link = f"http://localhost:5000/reset-password/{access_token}"
     # restore_link = f"{domen}:{port}/reset-password/{access_token}"
-    
-    
-    recipient_email = user.email
-    sender_email = os.getenv('SENDER_EMAIL')
-    sender_password = os.getenv('SENDER_PASSWORD')
-    
-    
-    message = MIMEText(f'Для зміни пароля перейдіть за посиланням: {restore_link}')
-    message['Subject'] = 'Password recovery'
-    message['From'] = sender_email
-    message['To'] = recipient_email
-    
-    try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login(sender_email, sender_password)
-        server.sendmail(sender_email, recipient_email, message.as_string())
-        server.quit()
+
+    if send_email(user, restore_link):
         return jsonify({'message': "Email sent successfully", "details": {
             "confirmation_link": restore_link,
             "email": user.email,
         }}), 200
-    except Exception as e:
-        return jsonify({'error': f"An error occurred: {str(e)}"}), 500
+    else:
+        return jsonify({'error': "An error occurred while sending the email"}), 500
 
 
 @auth_bp.put('/restorePassword')
@@ -240,7 +247,7 @@ def restore_password():
 
     if not user:
         return jsonify({'error': 'User with this email is not registered'}), 404
-    
+
     new_password = data.get("password")
     try:
         validate_password(new_password)
@@ -249,6 +256,5 @@ def restore_password():
     except ValidationError as e:
         errors = e.args[0]
         return jsonify({'error': errors}), 400
-    
-    
+
     return jsonify({'message': 'Password reset successfully'}), 200
