@@ -18,6 +18,14 @@ schema = UserSchema()
 update_schema = UserUpdateSchema()
 
 
+def create_access_and_refresh_tokens(user):
+    access_token = create_access_token(identity=user.email, additional_claims={
+                                       "username": user.username})
+    refresh_token = create_refresh_token(identity=user.email, additional_claims={
+                                         "username": user.username})
+    return access_token, refresh_token
+
+
 @auth_bp.post('/register')
 @swag_from('docs/Auth/register.yml')
 def register_user():
@@ -37,10 +45,8 @@ def register_user():
     new_user.set_password(password=data.get('password'))
     new_user.save()
 
-    access_token = create_access_token(identity=new_user.email, additional_claims={
-                                       "username": new_user.username})
-    refresh_token = create_refresh_token(identity=new_user.email, additional_claims={
-                                         "username": new_user.username})
+    access_token, refresh_token = create_access_and_refresh_tokens(new_user)
+
     return jsonify({
         "message": "User created and logged in successfully",
         "tokens": {
@@ -64,10 +70,8 @@ def login_user():
     if not user.check_password(password=data.get('password')):
         return jsonify({'error': 'Invalid password'}), 400
 
-    access_token = create_access_token(identity=user.email, additional_claims={
-        "username": user.username})
-    refresh_token = create_refresh_token(identity=user.email, additional_claims={
-        "username": user.username})
+    access_token, refresh_token = create_access_and_refresh_tokens(user)
+
     return jsonify({
         "message": "Logged in successfully",
         "tokens": {
@@ -82,31 +86,12 @@ def login_user():
 @jwt_required(refresh=True)
 @swag_from('docs/Auth/refresh.yml')
 def refresh_access():
-    identity = get_jwt_identity()
-    new_access_token = create_access_token(identity=identity)
+    user_email = get_jwt_identity()
+    new_access_token = create_access_token(identity=user_email)
     return jsonify({"access_token": new_access_token})
 
 
-@auth_bp.put('/updateProfile')
-@jwt_required()
-@swag_from('docs/update_profile.yml')
-def update_user_profile():
-    user_email = get_jwt_identity()
-    user = User.get_user_by_email(user_email)
-
-    if not user:
-        return jsonify({'error': 'User not found'}), 404
-
-    data = request.get_json()
-
-    if not data:
-        return jsonify({'error': 'No data provided'}), 400
-
-    errors = update_schema.validate(data)
-
-    if errors:
-        return jsonify({'error': errors}), 400
-
+def update_data(user, data):
     if 'username' in data:
         new_username = data.get("username")
         user.username = new_username
@@ -119,13 +104,33 @@ def update_user_profile():
         new_password = data.get("password")
         user.set_password(new_password)
 
+
+@auth_bp.put('/updateProfile')
+@jwt_required()
+@swag_from('docs/update_profile.yml')
+def update_user_profile():
+    user_email = get_jwt_identity()
+    user = User.get_user_by_email(user_email)
+
+    if not user:
+        return jsonify({'error': 'User with this email is not registered'}), 404
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+
+    errors = update_schema.validate(data)
+
+    if errors:
+        return jsonify({'error': errors}), 400
+
+    update_data(user, data)
+
     user.save()
 
     # Обновляем токены
-    access_token = create_access_token(identity=user.email, additional_claims={
-                                       "username": user.username})
-    refresh_token = create_refresh_token(identity=user.email, additional_claims={
-                                         "username": user.username})
+    access_token, refresh_token = create_access_and_refresh_tokens(user)
 
     return jsonify({
         'message': 'User profile updated successfully',
@@ -162,7 +167,7 @@ def delete_account():
     user = User.get_user_by_email(user_email)
 
     if not user:
-        return jsonify({'error': 'User not found'}), 404
+        return jsonify({'error': 'User with this email is not registered'}), 404
 
     block_tokens = TokenBlockList.get_token_by_id(user.id)
 
