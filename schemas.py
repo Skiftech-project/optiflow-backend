@@ -33,3 +33,10 @@ class UserSchema(Schema):
         required=True, validate=validate.Length(min=2, max=20))
     email = fields.Email(required=True)
     password = fields.String(required=True, validate=validate_password)
+
+
+class UserUpdateSchema(Schema):
+    username = fields.String(
+        required=False, validate=validate.Length(min=2, max=20))
+    email = fields.Email(required=False)
+    password = fields.String(required=False, validate=validate_password)
