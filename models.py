@@ -37,9 +37,9 @@ class User(db.Model):
             raise AssertionError('Invalid email address')
         return email
 
-    def set_password(self, password):  
+    def set_password(self, password):
         errors = {}
-        
+
         if len(password) < 8:
             errors['length'] = 'Password must be at least 8 characters long'
         if len(password) > 50:
@@ -56,11 +56,9 @@ class User(db.Model):
 
         if not re.match(r'^(?=.*[@$!%*?&])', password):
             errors['special'] = 'Password must contain at least one special character'
-            
-            
+
         if errors:
             raise AssertionError(errors)
-        
 
         self.password = generate_password_hash(password)
 
@@ -106,9 +104,8 @@ class TokenBlockList(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-        
-        
-        
+
+
 class CalculationTemplate(db.Model):
     __tablename__ = 'calculation_templates'
     template_name = db.Column(db.String(), primary_key=True)
@@ -125,14 +122,14 @@ class CalculationTemplate(db.Model):
     spot_height = db.Column(db.Float(), nullable=True)
     min_plume_size = db.Column(db.Float(), nullable=True)
     distance_for_plume_size = db.Column(db.Float(), nullable=True)
-    
+
     def __repr__(self):
         return f"<Template {self.template_name}>"
 
     def save(self):
         db.session.add(self)
         db.session.commit()
-        
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()
@@ -140,5 +137,3 @@ class CalculationTemplate(db.Model):
     @classmethod
     def get_all_templates(cls):
         return cls.query.all()
-
-    

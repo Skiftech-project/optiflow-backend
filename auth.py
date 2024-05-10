@@ -11,7 +11,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
 
 from models import TokenBlockList, User
 from schemas import UserSchema, validate_password
-from marshmallow import  ValidationError
+from marshmallow import ValidationError
 
 auth_bp = Blueprint('auth', __name__)
 schema = UserSchema()
@@ -92,15 +92,15 @@ def refresh_access():
 def update_user_profile():
     user_email = get_jwt_identity()
     user = User.get_user_by_email(email=user_email)
-    
+
     if not user:
         return jsonify({'error': 'User not found'}), 404
-    
+
     data = request.get_json()
-    
+
     if not data:
         return jsonify({'error': 'No data provided'}), 400
-    
+
     if 'username' in data:
         new_username = data.get("username")
         try:
@@ -123,15 +123,15 @@ def update_user_profile():
             user.set_password(new_password)
         except AssertionError as e:
             return jsonify({'error': str(e)}), 400
-    
+
     user.save()
-    
+
     # Обновляем токены
     access_token = create_access_token(identity=user.email, additional_claims={
                                        "username": user.username})
     refresh_token = create_refresh_token(identity=user.email, additional_claims={
                                          "username": user.username})
-    
+
     return jsonify({
         'message': 'User profile updated successfully',
         'tokens': {
@@ -197,25 +197,24 @@ def send_restore_email():
 
     if not user:
         return jsonify({'error': 'User with this email is not registered'}), 404
-    
-    
+
     expires = datetime.timedelta(minutes=10)
-    access_token = create_access_token(identity=user.email, expires_delta=expires)
-    
+    access_token = create_access_token(
+        identity=user.email, expires_delta=expires)
+
     restore_link = f"http://localhost:5000/reset-password/{access_token}"
     # restore_link = f"{domen}:{port}/reset-password/{access_token}"
-    
-    
+
     recipient_email = user.email
     sender_email = os.getenv('SENDER_EMAIL')
     sender_password = os.getenv('SENDER_PASSWORD')
-    
-    
-    message = MIMEText(f'Для зміни пароля перейдіть за посиланням: {restore_link}')
+
+    message = MIMEText(
+        f'Для зміни пароля перейдіть за посиланням: {restore_link}')
     message['Subject'] = 'Password recovery'
     message['From'] = sender_email
     message['To'] = recipient_email
-    
+
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
@@ -240,7 +239,7 @@ def restore_password():
 
     if not user:
         return jsonify({'error': 'User with this email is not registered'}), 404
-    
+
     new_password = data.get("password")
     try:
         validate_password(new_password)
@@ -249,6 +248,5 @@ def restore_password():
     except ValidationError as e:
         errors = e.args[0]
         return jsonify({'error': errors}), 400
-    
-    
+
     return jsonify({'message': 'Password reset successfully'}), 200

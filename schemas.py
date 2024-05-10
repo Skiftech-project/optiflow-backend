@@ -4,7 +4,7 @@ from marshmallow import Schema, ValidationError, fields, validate
 
 
 def validate_password(password):
-    
+
     errors = {}
     if len(password) < 8:
         errors['length'] = 'Password must be at least 8 characters long'
@@ -22,7 +22,7 @@ def validate_password(password):
 
     if not re.match(r'^(?=.*[@$!%*?&])', password):
         errors['special'] = 'Password must contain at least one special character'
-        
+
     if errors:
         raise ValidationError(errors)
 
