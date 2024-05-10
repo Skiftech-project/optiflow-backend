@@ -10,7 +10,8 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 jwt_required)
 
 from models import TokenBlockList, User
-from schemas import UserSchema
+from schemas import UserSchema, validate_password
+from marshmallow import  ValidationError
 
 auth_bp = Blueprint('auth', __name__)
 schema = UserSchema()
@@ -90,7 +91,7 @@ def refresh_access():
 @swag_from('docs/update_profile.yml')
 def update_user_profile():
     user_email = get_jwt_identity()
-    user = User.get_user_by_email(user_email)
+    user = User.get_user_by_email(email=user_email)
     
     if not user:
         return jsonify({'error': 'User not found'}), 404
@@ -229,3 +230,25 @@ def send_restore_email():
         return jsonify({'error': f"An error occurred: {str(e)}"}), 500
 
 
+@auth_bp.put('/restorePassword')
+@jwt_required()
+@swag_from('docs/restore_password.yml')
+def restore_password():
+    data = request.get_json()
+    user_email = get_jwt_identity()
+    user = User.get_user_by_email(email=user_email)
+
+    if not user:
+        return jsonify({'error': 'User with this email is not registered'}), 404
+    
+    new_password = data.get("password")
+    try:
+        validate_password(new_password)
+        user.set_password(new_password)
+        user.save()
+    except ValidationError as e:
+        errors = e.args[0]
+        return jsonify({'error': errors}), 400
+    
+    
+    return jsonify({'message': 'Password reset successfully'}), 200
