@@ -30,6 +30,6 @@ def validate_password(password):
 class UserSchema(Schema):
     id = fields.String(dump_only=True)
     username = fields.String(
-        required=True, validate=validate.Length(min=4, max=20))
+        required=True, validate=validate.Length(min=2, max=20))
     email = fields.Email(required=True)
     password = fields.String(required=True, validate=validate_password)

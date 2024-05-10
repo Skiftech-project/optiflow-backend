@@ -25,8 +25,8 @@ class User(db.Model):
             raise AssertionError('Username is required')
         if len(username) > 20:
             raise AssertionError('Username must be less than 20 characters')
-        elif len(username) < 4:
-            raise AssertionError('Username must be more than 4 characters')
+        elif len(username) < 2:
+            raise AssertionError('Username must be more than 2 characters')
         return username
 
     @validates('email')
