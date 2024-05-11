@@ -7,7 +7,7 @@ from flasgger import swag_from
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 current_user, get_jwt, get_jwt_identity,
-                                jwt_required)
+                                jwt_required, decode_token)
 
 from models import TokenBlockList, User
 from schemas import UserSchema, validate_password, UserUpdateSchema
@@ -46,11 +46,17 @@ def register_user():
     new_user.save()
 
     access_token, refresh_token = create_access_and_refresh_tokens(new_user)
+    
+    # Получение декодированных данных токена, включая срок действия
+    decoded_token = decode_token(access_token)
+    # Время жизни access токена в секундах
+    expires_in_seconds = decoded_token['exp'] - decoded_token['iat']
 
     return jsonify({
         "message": "User created and logged in successfully",
         "tokens": {
             "access_token": access_token,
+            "access_token_expires_time (seconds)": expires_in_seconds,
             "refresh_token": refresh_token,
         }
     }), 201
