@@ -36,6 +36,7 @@ SQLALCHEMY_ECHO=<YOUR-ECHO>
 FLASK_JWT_SECRET_KEY=<YOUR-JWT-SECRET-KEY>
 SENDER_EMAIL=<YOUR-SENDER-EMAIL>
 SENDER_PASSWORD=<YOUR-SENDER-PASSWORD>
+EXPIRES_TIME=<YOUR_EXPIRES_TIME>
 ```
 
 Додаток використовує docker. Для того, щоб запустити базу даних в фоновому режимі, пропишіть
