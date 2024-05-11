@@ -113,7 +113,7 @@ def update_data(user, data):
 
 @auth_bp.put('/updateProfile')
 @jwt_required()
-@swag_from('docs/update_profile.yml')
+@swag_from('docs/Auth/update_profile.yml')
 def update_user_profile():
     user_email = get_jwt_identity()
     user = User.get_user_by_email(user_email)
