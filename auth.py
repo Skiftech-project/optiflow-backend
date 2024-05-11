@@ -175,11 +175,6 @@ def delete_account():
     if not user:
         return jsonify({'error': 'User with this email is not registered'}), 404
 
-    block_tokens = TokenBlockList.get_token_by_id(user.id)
-
-    for token in block_tokens:
-        token.delete()
-
     user.delete()
 
     return jsonify({'message': f'User profile {user.username} deleted successfully'}), 200

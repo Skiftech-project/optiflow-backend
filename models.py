@@ -16,7 +16,8 @@ class User(db.Model):
     email = db.Column(EmailType, nullable=False, unique=True)
     password = db.Column(db.Text())
     
-    saved_templates = db.relationship("SavedCalculationTemplate", back_populates="user")
+    saved_templates = db.relationship("SavedCalculationTemplate", back_populates="user", cascade='all, delete-orphan')
+    token_block_list = db.relationship("TokenBlockList", back_populates="user", cascade='all, delete-orphan')
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -87,7 +88,10 @@ class User(db.Model):
 class TokenBlockList(db.Model):
     __tablename__ = 'token_block_list'
     id = db.Column(db.Integer(), primary_key=True)
+    
     user_id = db.Column(db.String(), db.ForeignKey(User.id))
+    user = db.relationship("User", back_populates="token_block_list")
+    
     jti = db.Column(db.String(), nullable=False)
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
 
