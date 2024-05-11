@@ -17,32 +17,32 @@ responses:
                 type: string
                 description: Name of the template.
               sensitivity:
-                type: string
+                type: number
                 description: Sensitivity of the template.
               power:
-                type: string
+                type: number
                 description: Power of the template.
               plume_form:
                 type: string
                 description: Plume form of the template.
               angle_width:
-                type: string
+                type: number
                 description: Angle width of the template.
               angle_height:
-                type: string
+                type: number
                 description: Angle height of the template.
               distance:
-                type: string
+                type: number
                 description: Distance of the template.
               spot_width:
-                type: string
+                type: number
                 description: Spot width of the template.
               spot_height:
-                type: string
+                type: number
                 description: Spot height of the template.
               min_plume_size:
-                type: string
+                type: number
                 description: Minimum plume size of the template.
               distance_for_plume_size:
-                type: string
+                type: number
                 description: Distance for plume size of the template.

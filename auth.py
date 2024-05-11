@@ -6,12 +6,12 @@ from email.mime.text import MIMEText
 from flasgger import swag_from
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import (create_access_token, create_refresh_token,
-                                current_user, get_jwt, get_jwt_identity,
-                                jwt_required, decode_token)
+                                current_user, decode_token, get_jwt,
+                                get_jwt_identity, jwt_required)
+from marshmallow import ValidationError
 
 from models import TokenBlockList, User
-from schemas import UserSchema, validate_password, UserUpdateSchema
-from marshmallow import ValidationError
+from schemas import UserSchema, UserUpdateSchema, validate_password
 
 auth_bp = Blueprint('auth', __name__)
 schema = UserSchema()
@@ -46,7 +46,7 @@ def register_user():
     new_user.save()
 
     access_token, refresh_token = create_access_and_refresh_tokens(new_user)
-    
+
     # Получение декодированных данных токена, включая срок действия
     decoded_token = decode_token(access_token)
     # Время жизни access токена в секундах

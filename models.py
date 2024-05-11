@@ -15,9 +15,11 @@ class User(db.Model):
     username = db.Column(db.String(), nullable=False)
     email = db.Column(EmailType, nullable=False, unique=True)
     password = db.Column(db.Text())
-    
-    saved_templates = db.relationship("SavedCalculationTemplate", back_populates="user", cascade='all, delete-orphan')
-    token_block_list = db.relationship("TokenBlockList", back_populates="user", cascade='all, delete-orphan')
+
+    saved_templates = db.relationship(
+        "SavedCalculationTemplate", back_populates="user", cascade='all, delete-orphan')
+    token_block_list = db.relationship(
+        "TokenBlockList", back_populates="user", cascade='all, delete-orphan')
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -88,10 +90,10 @@ class User(db.Model):
 class TokenBlockList(db.Model):
     __tablename__ = 'token_block_list'
     id = db.Column(db.Integer(), primary_key=True)
-    
+
     user_id = db.Column(db.String(), db.ForeignKey(User.id))
     user = db.relationship("User", back_populates="token_block_list")
-    
+
     jti = db.Column(db.String(), nullable=False)
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
 
@@ -120,8 +122,8 @@ class CalculationTemplate(db.Model):
 
     plume_form = db.Column(db.String(), nullable=False)
 
-    angle_width = db.Column(db.Float(), nullable=True)
-    angle_height = db.Column(db.Float(), nullable=True)
+    angle_width = db.Column(db.Float(), nullable=False)
+    angle_height = db.Column(db.Float(), nullable=False)
 
     distance = db.Column(db.Float(), nullable=True)
     spot_width = db.Column(db.Float(), nullable=True)
@@ -148,11 +150,10 @@ class CalculationTemplate(db.Model):
 class SavedCalculationTemplate(db.Model):
     __tablename__ = 'saved_calculation_templates'
     id = db.Column(db.Integer(), primary_key=True)
-    
-    
+
     user_id = db.Column(db.String(), db.ForeignKey('users.id'), nullable=False)
     user = db.relationship("User", back_populates="saved_templates")
-    
+
     sensitivity = db.Column(db.Float(), nullable=False)
     power = db.Column(db.Float(), nullable=False)
 
@@ -166,13 +167,11 @@ class SavedCalculationTemplate(db.Model):
     spot_height = db.Column(db.Float(), nullable=True)
     min_plume_size = db.Column(db.Float(), nullable=True)
     distance_for_plume_size = db.Column(db.Float(), nullable=True)
-    
-    
+
     max_distance = db.Column(db.Float(), nullable=False)
     min_distance = db.Column(db.Float(), nullable=True)
     plume_width_module3 = db.Column(db.Float(), nullable=True)
     plume_height_module3 = db.Column(db.Float(), nullable=True)
-    
 
     def __repr__(self):
         return f"<Template {self.id}>"

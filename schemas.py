@@ -40,3 +40,36 @@ class UserUpdateSchema(Schema):
         required=False, validate=validate.Length(min=2, max=20))
     email = fields.Email(required=False)
     password = fields.String(required=False, validate=validate_password)
+
+
+class CalculationTemplateSchema(Schema):
+    template_name = fields.String(required=True)
+    sensitivity = fields.Float(required=True)
+    power = fields.Float(required=True)
+    plume_form = fields.String(required=True)
+    angle_width = fields.Float(required=True)
+    angle_height = fields.Float(required=True)
+    distance = fields.Float()
+    spot_width = fields.Float()
+    spot_height = fields.Float()
+    min_plume_size = fields.Float()
+    distance_for_plume_size = fields.Float()
+
+
+class SavedCalculationTemplateSchema(Schema):
+    id = fields.Integer(required=True)
+    user_id = fields.String(required=True)
+    sensitivity = fields.Float(required=True)
+    power = fields.Float(required=True)
+    plume_form = fields.String(required=True)
+    angle_width = fields.Float(required=True)
+    angle_height = fields.Float(required=True)
+    distance = fields.Float()
+    spot_width = fields.Float()
+    spot_height = fields.Float()
+    min_plume_size = fields.Float()
+    distance_for_plume_size = fields.Float()
+    max_distance = fields.Float(required=True)
+    min_distance = fields.Float()
+    plume_width_module3 = fields.Float()
+    plume_height_module3 = fields.Float()
