@@ -11,11 +11,12 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
 from marshmallow import ValidationError
 
 from models import TokenBlockList, User
-from schemas import UserSchema, UserUpdateSchema, validate_password
+from schemas import UserSchema, UserUpdateSchema, UserUpdatePasswordSchema, validate_password
 
 auth_bp = Blueprint('auth', __name__)
 schema = UserSchema()
 update_schema = UserUpdateSchema()
+update_password_schema = UserUpdatePasswordSchema()
 
 
 def create_access_and_refresh_tokens(user):
@@ -105,10 +106,6 @@ def update_data(user, data):
     if 'email' in data:
         new_email = data.get("email")
         user.email = new_email
-
-    if 'password' in data:
-        new_password = data.get("password")
-        user.set_password(new_password)
 
 
 @auth_bp.put('/updateProfile')
@@ -259,3 +256,44 @@ def restore_password():
         return jsonify({'error': errors}), 400
 
     return jsonify({'message': 'Password reset successfully'}), 200
+
+
+
+@auth_bp.put('/updateUserPassword')
+@jwt_required()
+@swag_from('docs/Auth/update_user_password.yml')
+def update_user_password():
+    user_email = get_jwt_identity()
+    user = User.get_user_by_email(user_email)
+    
+    if not user:
+        return jsonify({'error': 'User with this email is not registered'}), 404
+
+    data = request.get_json()
+    
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+    
+    if not user.check_password(password=old_password):
+        return jsonify({'error': 'The current password is incorrect'}), 400
+    
+    if user.check_password(password=new_password):
+        return jsonify({'error': 'The new password cannot be the same as the current password'}), 400
+    
+    
+    
+    new_data = {
+        'new_password': new_password
+    }
+    errors = update_password_schema.validate(new_data)
+
+    if errors:
+        return jsonify({'error': errors}), 400
+    
+    user.set_password(new_password)
+    user.save()
+    
+    return jsonify({
+        'message': 'User password updated successfully',
+    }), 200
+    

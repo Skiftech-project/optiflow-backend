@@ -40,6 +40,10 @@ class UserUpdateSchema(Schema):
         required=False, validate=validate.Length(min=2, max=20))
     email = fields.Email(required=False)
     password = fields.String(required=False, validate=validate_password)
+    
+    
+class UserUpdatePasswordSchema(Schema):
+    new_password = fields.String(required=False, validate=validate_password)
 
 
 class CalculationTemplateSchema(Schema):

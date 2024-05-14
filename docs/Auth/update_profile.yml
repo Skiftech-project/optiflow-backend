@@ -24,9 +24,6 @@ parameters:
           type: string
           format: email
           description: New email for the user.
-        password:
-          type: string
-          description: New password for the user.
 responses:
   "200":
     description: User profile successfully updated.
