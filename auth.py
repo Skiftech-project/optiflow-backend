@@ -122,11 +122,18 @@ def update_user_profile():
 
     if not data:
         return jsonify({'error': 'No data provided'}), 400
-
+    
     errors = update_schema.validate(data)
 
     if errors:
         return jsonify({'error': errors}), 400
+    
+    
+    new_email = data.get('email')
+    if new_email and new_email != user_email:
+        existing_user = User.get_user_by_email(new_email)
+        if existing_user:
+            return jsonify({'error': 'Email is already in use'}), 409
 
     update_data(user, data)
 
@@ -172,6 +179,7 @@ def delete_account():
     if not user:
         return jsonify({'error': 'User with this email is not registered'}), 404
 
+    # logout_user()
     user.delete()
 
     return jsonify({'message': f'User profile {user.username} deleted successfully'}), 200
