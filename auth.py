@@ -114,8 +114,21 @@ def login_user():
 @swag_from('docs/Auth/refresh.yml')
 def refresh_access():
     user_email = get_jwt_identity()
-    new_access_token = create_access_token(identity=user_email)
-    return jsonify({"access_token": new_access_token})
+    user = User.get_user_by_email(email=user_email)
+    new_access_token, new_refresh_token = create_access_and_refresh_tokens(user=user)
+    
+    response = make_response(
+        jsonify({"access_token": new_access_token})
+    )
+    
+    response.set_cookie(
+        'refreshToken',
+        new_refresh_token,
+        httponly=True,
+        secure=True
+    )
+    
+    return response
 
 
 def update_data(user, data):

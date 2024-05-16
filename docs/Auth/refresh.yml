@@ -4,6 +4,7 @@ summary: Refresh access token
 description: |
   Refreshes the access token for the current user using the refresh token.
   Requires a valid JWT access token with the 'refresh' type in the Authorization header.
+  Sets the access token in the response and the refresh token as an HttpOnly cookie.
 tags:
   - Auth
 parameters:
