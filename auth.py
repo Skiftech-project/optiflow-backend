@@ -174,14 +174,20 @@ def update_user_profile():
 
     # Обновляем токены
     access_token, refresh_token = create_access_and_refresh_tokens(user)
-
-    return jsonify({
-        'message': 'User profile updated successfully',
-        'tokens': {
-            'access_token': access_token,
-            'refresh_token': refresh_token
-        }
-    }), 200
+    
+    response = make_response(jsonify({
+        "message": "User profile updated successfully",
+        "access_token": access_token,
+    }), 200)
+    
+    response.set_cookie(
+        'refreshToken',
+        refresh_token,
+        httponly=True,
+        secure=True
+    )
+    
+    return response
 
 
 @auth_bp.get('/logout')

@@ -1,7 +1,9 @@
 Update user profile information.
 ---
 summary: Update user profile
-description: Updates the user profile information including username, email, and password.
+description: |
+  Updates the user profile information including username, email, and password. 
+  Sets the access token in the response and the refresh token as an HttpOnly cookie.
 tags:
   - Auth
 parameters:
@@ -34,16 +36,9 @@ responses:
           type: string
           description: Message confirming successful update of user profile.
           example: "User profile updated successfully."
-        tokens:
-          type: object
-          description: JWT tokens for the updated user profile.
-          properties:
-            access_token:
-              type: string
-              description: JWT access token for the updated user profile.
-            refresh_token:
-              type: string
-              description: JWT refresh token for the updated user profile.
+        access_token:
+          type: string
+          description: JWT access token for the updated user profile.
   "400":
     description: Bad request.
     schema:
