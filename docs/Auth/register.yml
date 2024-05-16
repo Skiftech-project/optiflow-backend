@@ -41,6 +41,15 @@ responses:
             refresh_token:
               type: string
               description: Refresh token for user authentication.
+  "400":
+    description: Bad Request - Invalid input data.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message indicating invalid input data.
+          example: Invalid input data.
   "409":
     description: User already exists.
     schema:

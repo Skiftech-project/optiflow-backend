@@ -4,7 +4,7 @@ import smtplib
 from email.mime.text import MIMEText
 
 from flasgger import swag_from
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 current_user, decode_token, get_jwt,
                                 get_jwt_identity, jwt_required)
@@ -55,16 +55,25 @@ def register_user():
     # Получение декодированных данных refresh токена, включая срок действия
     decoded_refresh_token = decode_token(refresh_token)
     refresh_token_expires_in_seconds = decoded_refresh_token['exp'] - decoded_refresh_token['iat']
-
-    return jsonify({
+    
+    response = make_response(
+        jsonify({
         "message": "User created and logged in successfully",
         "tokens": {
             "access_token": access_token,
             "access_token_expires_time (seconds)": access_token_expires_in_seconds,
-            "refresh_token": refresh_token,
             "refresh_token_expires_time (seconds)": refresh_token_expires_in_seconds,
         }
-    }), 201
+    }), 201)
+    
+    response.set_cookie(
+        'refreshToken',
+        refresh_token,
+        httponly=True,
+        secure=True
+    )
+    
+    return response
 
 
 @auth_bp.post('/login')
