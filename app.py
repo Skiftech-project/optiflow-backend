@@ -44,8 +44,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
     'SQLALCHEMY_DATABASE_URI', 'sqlite:///database.db')
 app.config['SQLALCHEMY_ECHO'] = bool(os.getenv('SQLALCHEMY_ECHO', 1))
 app.config['FLASK_JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'secret')
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(
-    days=int(os.getenv('EXPIRES_TIME')))
 
 
 # initialize extensions

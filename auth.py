@@ -48,17 +48,21 @@ def register_user():
 
     access_token, refresh_token = create_access_and_refresh_tokens(new_user)
 
-    # Получение декодированных данных токена, включая срок действия
-    decoded_token = decode_token(access_token)
-    # Время жизни access токена в секундах
-    expires_in_seconds = decoded_token['exp'] - decoded_token['iat']
+    # Получение декодированных данных access токена, включая срок действия
+    decoded_access_token = decode_token(access_token)
+    access_token_expires_in_seconds = decoded_access_token['exp'] - decoded_access_token['iat']
+    
+    # Получение декодированных данных refresh токена, включая срок действия
+    decoded_refresh_token = decode_token(refresh_token)
+    refresh_token_expires_in_seconds = decoded_refresh_token['exp'] - decoded_refresh_token['iat']
 
     return jsonify({
         "message": "User created and logged in successfully",
         "tokens": {
             "access_token": access_token,
-            "access_token_expires_time (seconds)": expires_in_seconds,
+            "access_token_expires_time (seconds)": access_token_expires_in_seconds,
             "refresh_token": refresh_token,
+            "refresh_token_expires_time (seconds)": refresh_token_expires_in_seconds,
         }
     }), 201
 
