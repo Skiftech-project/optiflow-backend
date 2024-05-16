@@ -213,6 +213,7 @@ def send_email(user, restore_link):
 @auth_bp.post('/sendResetEmail')
 @swag_from('docs/Auth/send_reset_email.yml')
 def send_restore_email():
+    domen = os.getenv("DOMEN")
     data = request.get_json()
     user = User.get_user_by_email(email=data.get('email'))
 
@@ -223,8 +224,7 @@ def send_restore_email():
     access_token = create_access_token(
         identity=user.email, expires_delta=expires)
 
-    restore_link = f"http://localhost:5000/reset-password/{access_token}"
-    # restore_link = f"{domen}:{port}/reset-password/{access_token}"
+    restore_link = f"{domen}login/forgotPassword/?token={access_token}"
 
     if send_email(user, restore_link):
         return jsonify({'message': "Email sent successfully", "details": {
