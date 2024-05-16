@@ -1,7 +1,7 @@
 This is the API for registration.
 ---
 summary: Register User
-description: Registers a new user.
+description: Registers a new user. Sets the access token in the response and the refresh token as an HttpOnly cookie.
 tags:
   - Auth
 parameters:
@@ -32,15 +32,9 @@ responses:
           type: string
           description: Message confirming user creation.
           example: User created.
-        tokens:
-          type: object
-          properties:
-            access_token:
-              type: string
-              description: Access token for user authentication.
-            refresh_token:
-              type: string
-              description: Refresh token for user authentication.
+        access_token:
+          type: string
+          description: Access token for user authentication.
   "400":
     description: Bad Request - Invalid input data.
     schema:
