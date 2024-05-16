@@ -60,5 +60,14 @@ responses:
         error:
           type: string
           description: Error message indicating user with this email is not registered.
+  "409":
+    description: Email is already in use.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message indicating the email is already in use.
+          example: "Email is already in use."
 security:
   - JWT: []
