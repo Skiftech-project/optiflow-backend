@@ -204,8 +204,11 @@ def logout_user():
 
     token_b = TokenBlockList(jti=jti)
     token_b.save(user_id=user.id)
+    
+    response = make_response(jsonify({'message': f'{token_type} token revoked successfully'}), 200)
+    response.delete_cookie('refreshToken')
 
-    return jsonify({'message': f'{token_type} token revoked successfully'}), 200
+    return response
 
 
 @auth_bp.delete('/deleteAccount')
@@ -221,7 +224,9 @@ def delete_account():
     # logout_user()
     user.delete()
 
-    return jsonify({'message': f'User profile {user.username} deleted successfully'}), 200
+    response = make_response(jsonify({'message': f'User profile {user.username} deleted successfully'}), 200)
+    response.delete_cookie('refreshToken')
+    return response
 
 
 @auth_bp.get('/whoami')
@@ -326,8 +331,6 @@ def update_user_password():
     
     if user.check_password(password=new_password):
         return jsonify({'error': 'The new password cannot be the same as the current password'}), 400
-    
-    
     
     new_data = {
         'new_password': new_password
