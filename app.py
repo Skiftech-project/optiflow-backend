@@ -30,6 +30,12 @@ template = {
             "name": "Authorization",
             "in": "header",
             "description": "JWT authorization header using the Bearer scheme",
+        },
+        "CookieAuth": {  # Новый шаблон для cookie
+            "type": "apiKey",
+            "name": "refreshToken",
+            "in": "cookie",
+            "description": "User session cookie",
         }
     }
 }

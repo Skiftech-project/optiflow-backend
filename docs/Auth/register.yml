@@ -35,6 +35,11 @@ responses:
         access_token:
           type: string
           description: Access token for user authentication.
+    headers:
+      Set-Cookie:
+        schema:
+          type: string
+          description: HttpOnly cookie containing the refresh token.
   "400":
     description: Bad Request - Invalid input data.
     schema:

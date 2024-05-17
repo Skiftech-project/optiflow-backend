@@ -7,6 +7,7 @@ from flasgger import swag_from
 from flask import Blueprint, jsonify, request, make_response
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 current_user, decode_token, get_jwt,
+                                unset_jwt_cookies,
                                 get_jwt_identity, jwt_required)
 from marshmallow import ValidationError
 
@@ -110,26 +111,38 @@ def login_user():
 
 
 @auth_bp.get('/refresh')
-@jwt_required(refresh=True)
 @swag_from('docs/Auth/refresh.yml')
 def refresh_access():
-    user_email = get_jwt_identity()
-    user = User.get_user_by_email(email=user_email)
-    new_access_token, new_refresh_token = create_access_and_refresh_tokens(user=user)
+    refresh_token = request.cookies.get('refreshToken')
+    print(request.cookies)
     
-    response = make_response(
-        jsonify({"access_token": new_access_token})
-    )
+    if not refresh_token:
+        return jsonify({"error": "Refresh token is missing"}), 401
     
-    response.set_cookie(
-        'refreshToken',
-        new_refresh_token,
-        httponly=True,
-        secure=True
-    )
+    try:
+        decoded_refresh_token = decode_token(refresh_token)
+        user_email = decoded_refresh_token['sub']
+        
+        user = User.get_user_by_email(email=user_email)
+        new_access_token, new_refresh_token = create_access_and_refresh_tokens(user=user)
+        
+        response = make_response(
+            jsonify({"access_token": new_access_token})
+        )
+        
+        response.set_cookie(
+            'refreshToken',
+            new_refresh_token,
+            httponly=True,
+            secure=True
+        )
+        
+        return response
+        
+        
+    except Exception as e:
+        return jsonify({"error": "Invalid refresh token"}), 401
     
-    return response
-
 
 def update_data(user, data):
     if 'username' in data:

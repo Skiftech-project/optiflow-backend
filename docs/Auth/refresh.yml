@@ -2,25 +2,47 @@ Refresh access token.
 ---
 summary: Refresh access token
 description: |
-  Refreshes the access token for the current user using the refresh token.
-  Requires a valid JWT access token with the 'refresh' type in the Authorization header.
-  Sets the access token in the response and the refresh token as an HttpOnly cookie.
+  Refreshes the access token for the current user using the refresh token stored in HttpOnly cookies.
+  Requires a valid refresh token stored in the request cookies.
+  Sets the new access token in the response and updates the refresh token as an HttpOnly cookie.
 tags:
   - Auth
 parameters:
-  - in: header
-    name: Authorization
+  - in: cookie
+    name: refreshToken
     type: string
     required: true
-    description: JWT token obtained during authentication.
+    description: Refresh token stored in HttpOnly cookie.
 responses:
   "200":
     description: New access token generated successfully.
-    schema:
-      type: object
-      properties:
-        access_token:
-          type: string
-          description: Newly generated access token.
-security:
-  - JWT: []
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            access_token:
+              type: string
+              description: Newly generated access token.
+  "401":
+    description: Unauthorized. Refresh token is missing or invalid.
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              description: Error message indicating the issue.
+  "404":
+    description: User not found.
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              description: Error message indicating the issue.
+security: 
+  - CookieAuth: []
