@@ -71,7 +71,8 @@ def register_user():
         'refreshToken',
         refresh_token,
         httponly=True,
-        secure=True
+        secure=True,
+        samesite='None'
     )
     
     return response
@@ -102,7 +103,8 @@ def login_user():
         'refreshToken',
         refresh_token,
         httponly=True,
-        secure=True
+        secure=True,
+        samesite='None'
     )
     
     return response
@@ -134,7 +136,8 @@ def refresh_access():
             'refreshToken',
             new_refresh_token,
             httponly=True,
-            secure=True
+            secure=True,
+            samesite='None'
         )
         
         return response
@@ -197,7 +200,8 @@ def update_user_profile():
         'refreshToken',
         refresh_token,
         httponly=True,
-        secure=True
+        secure=True,
+        samesite='None'
     )
     
     return response
