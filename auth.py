@@ -59,11 +59,9 @@ def register_user():
     response = make_response(
         jsonify({
         "message": "User created and logged in successfully",
-        "tokens": {
-            "access_token": access_token,
-            "access_token_expires_time (seconds)": access_token_expires_in_seconds,
-            "refresh_token_expires_time (seconds)": refresh_token_expires_in_seconds,
-        }
+        "access_token": access_token,
+        "access_token_expires_time (seconds)": access_token_expires_in_seconds,
+        "refresh_token_expires_time (seconds)": refresh_token_expires_in_seconds,
     }), 201)
     
     response.set_cookie(
