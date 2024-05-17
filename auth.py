@@ -7,7 +7,6 @@ from flasgger import swag_from
 from flask import Blueprint, jsonify, request, make_response
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 current_user, decode_token, get_jwt,
-                                unset_jwt_cookies,
                                 get_jwt_identity, jwt_required)
 from marshmallow import ValidationError
 
@@ -72,7 +71,8 @@ def register_user():
         refresh_token,
         httponly=True,
         secure=True,
-        samesite='None'
+        samesite='None',
+        path="/"
     )
     
     return response
@@ -104,7 +104,8 @@ def login_user():
         refresh_token,
         httponly=True,
         secure=True,
-        samesite='None'
+        samesite='None',
+        path="/"
     )
     
     return response
@@ -137,11 +138,10 @@ def refresh_access():
             new_refresh_token,
             httponly=True,
             secure=True,
-            samesite='None'
+            samesite='None',
+            path="/"
         )
-        
         return response
-        
         
     except Exception as e:
         return jsonify({"error": "Invalid refresh token"}), 401
@@ -201,7 +201,8 @@ def update_user_profile():
         refresh_token,
         httponly=True,
         secure=True,
-        samesite='None'
+        samesite='None',
+        path="/"
     )
     
     return response
@@ -221,9 +222,9 @@ def logout_user():
 
     token_b = TokenBlockList(jti=jti)
     token_b.save(user_id=user.id)
-    
+
     response = make_response(jsonify({'message': f'{token_type} token revoked successfully'}), 200)
-    response.delete_cookie('refreshToken')
+    response.delete_cookie(key='refreshToken', httponly=True, secure=True, samesite='None', path="/")
 
     return response
 
