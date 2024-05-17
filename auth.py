@@ -292,7 +292,7 @@ def send_restore_email():
     access_token = create_access_token(
         identity=user.email, expires_delta=expires)
 
-    restore_link = f"{domen}login/forgotPassword/?token={access_token}"
+    restore_link = f"{domen}login/restorePassword/?token={access_token}"
 
     if send_email(user, restore_link):
         return jsonify({'message': "Email sent successfully", "details": {
