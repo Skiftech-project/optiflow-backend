@@ -25,6 +25,9 @@ responses:
               user_id:
                 type: string
                 description: User ID associated with the template.
+              calculator_type:
+                type: string
+                description: From which calculator user saved the template.
               sensitivity:
                 type: number
                 description: Sensitivity of the template.
