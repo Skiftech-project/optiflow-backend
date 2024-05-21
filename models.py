@@ -151,6 +151,7 @@ class SavedCalculationTemplate(db.Model):
     __tablename__ = 'saved_calculation_templates'
     id = db.Column(db.Integer(), primary_key=True)
     calculator_type = db.Column(db.String(), nullable=False)
+    title = db.Column(db.String(), nullable=False)
 
     user_id = db.Column(db.String(), db.ForeignKey('users.id'), nullable=False)
     user = db.relationship("User", back_populates="saved_templates")

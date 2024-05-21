@@ -21,7 +21,7 @@ update_password_schema = UserUpdatePasswordSchema()
 
 def create_access_and_refresh_tokens(user):
     access_token = create_access_token(identity=user.email, additional_claims={
-                                       "username": user.username}, expires_delta=datetime.timedelta(seconds=30))
+                                       "username": user.username})
     refresh_token = create_refresh_token(identity=user.email, additional_claims={
                                          "username": user.username})
     return access_token, refresh_token

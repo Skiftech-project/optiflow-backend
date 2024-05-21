@@ -18,6 +18,9 @@ parameters:
         calculator_type:
           type: string
           description: From which calculator user saved the template.
+        title:
+          type: string
+          description: Title of the template.
         sensitivity:
           type: number
           description: Sensitivity of the template.

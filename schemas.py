@@ -63,6 +63,7 @@ class CalculationTemplateSchema(Schema):
 class SavedCalculationTemplateSchema(Schema):
     id = fields.Integer(required=True)
     calculator_type = fields.String(required=True)
+    title = fields.String(required=True)
     user_id = fields.String(required=True)
     sensitivity = fields.Float(required=True)
     power = fields.Float(required=True)
