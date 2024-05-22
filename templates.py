@@ -128,7 +128,7 @@ def update_template():
         if hasattr(template, key):
             setattr(template, key, value)
         else:
-            return jsonify({'error': f'Field {key} does not exist'}), 400
+            return jsonify({'error': f'Field {key} does not exist'}), 404
 
     template.save()
     return jsonify({"message": "Template updated successfully"}), 200

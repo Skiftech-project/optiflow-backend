@@ -1,0 +1,95 @@
+summary: Update Template
+description: Updates a calculation template for the current user.
+tags:
+  - Templates
+parameters:
+  - in: header
+    name: Authorization
+    type: string
+    required: true
+    description: JWT token obtained during authentication.
+  - in: body
+    name: template_data
+    description: Data of the template to be updated.
+    required: true
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID of the template to be updated.
+        calculator_type:
+          type: string
+          description: From which calculator user saved the template.
+        title:
+          type: string
+          description: Title of the template.
+        sensitivity:
+          type: number
+          description: Sensitivity of the template.
+        power:
+          type: number
+          description: Power of the template.
+        plume_form:
+          type: string
+          description: Plume form of the template.
+        angle_width:
+          type: number
+          description: Angle width of the template.
+        angle_height:
+          type: number
+          description: Angle height of the template.
+        distance:
+          type: number
+          description: Distance of the template.
+        spot_width:
+          type: number
+          description: Spot width of the template.
+        spot_height:
+          type: number
+          description: Spot height of the template.
+        min_plume_size:
+          type: number
+          description: Minimum plume size of the template.
+        distance_for_plume_size:
+          type: number
+          description: Distance for plume size of the template.
+        max_distance:
+          type: number
+          description: Maximum distance of the template.
+        min_distance:
+          type: number
+          description: Minimum distance of the template.
+        plume_width_module3:
+          type: number
+          description: Plume width module 3 of the template.
+        plume_height_module3:
+          type: number
+          description: Plume height module 3 of the template.
+responses:
+  "200":
+    description: Template updated successfully.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message indicating template updated successfully.
+  "400":
+    description: Invalid request or no changes to update.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message indicating invalid request or no changes to update.
+  "404":
+    description: User with this email is not registered, template not found, or field does not exist.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message indicating user not registered, template not found, or field does not exist.
+security:
+  - JWT: []
