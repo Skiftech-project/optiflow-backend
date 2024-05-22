@@ -4,6 +4,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from models import CalculationTemplate, SavedCalculationTemplate, User
 from schemas import CalculationTemplateSchema, SavedCalculationTemplateSchema
+from sqlalchemy.inspection import inspect
 
 template_bp = Blueprint('template', __name__)
 
@@ -99,3 +100,35 @@ def delete_template():
     template.delete()
 
     return jsonify({"message": "Template deleted successfully"}), 200
+
+
+@template_bp.put('/updateTemplate')
+@jwt_required()
+@swag_from('docs/Template/updateTemplate.yml')
+def update_template():
+    data = request.get_json()
+
+    user_email = get_jwt_identity()
+    user = User.get_user_by_email(email=user_email)
+
+    if not user:
+        return jsonify({'error': 'User with this email is not registered'}), 404
+
+    template = SavedCalculationTemplate.get_template_by_id(data.get('id'))
+
+    if not template:
+        return jsonify({'error': 'Template not found'}), 404
+
+    if 'id' in data:
+        del data['id']
+    if len(data) == 0:
+        return jsonify({'error': 'No changes to update'}), 400
+
+    for key, value in data.items():
+        if hasattr(template, key):
+            setattr(template, key, value)
+        else:
+            return jsonify({'error': f'Field {key} does not exist'}), 400
+
+    template.save()
+    return jsonify({"message": "Template updated successfully"}), 200
