@@ -77,3 +77,25 @@ def save_templates():
     template.save()
 
     return jsonify({"message": "Template saved successfully"}), 200
+
+
+@template_bp.delete('/deleteTemplate')
+@jwt_required()
+@swag_from('docs/Template/deleteTemplate.yml')
+def delete_template():
+    data = request.get_json()
+
+    user_email = get_jwt_identity()
+    user = User.get_user_by_email(email=user_email)
+
+    if not user:
+        return jsonify({'error': 'User with this email is not registered'}), 404
+
+    template = SavedCalculationTemplate.get_template_by_id(data.get('id'))
+
+    if not template:
+        return jsonify({'error': 'Template not found'}), 404
+
+    template.delete()
+
+    return jsonify({"message": "Template deleted successfully"}), 200

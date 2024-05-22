@@ -1,0 +1,39 @@
+summary: Delete Template
+description: Deletes a calculation template for the current user.
+tags:
+  - Templates
+parameters:
+  - in: header
+    name: Authorization
+    type: string
+    required: true
+    description: JWT token obtained during authentication.
+  - in: body
+    name: template_data
+    description: Data of the template to be deleted.
+    required: true
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID of the template to be deleted.
+responses:
+  "200":
+    description: Template deleted successfully.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message indicating template deleted successfully.
+  "404":
+    description: User with this email is not registered or template not found.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message indicating user not registered or template not found.
+security:
+  - JWT: []

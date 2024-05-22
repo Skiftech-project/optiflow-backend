@@ -50,20 +50,22 @@ def register_user():
 
     # Получение декодированных данных access токена, включая срок действия
     decoded_access_token = decode_token(access_token)
-    access_token_expires_in_seconds = decoded_access_token['exp'] - decoded_access_token['iat']
-    
+    access_token_expires_in_seconds = decoded_access_token['exp'] - \
+        decoded_access_token['iat']
+
     # Получение декодированных данных refresh токена, включая срок действия
     decoded_refresh_token = decode_token(refresh_token)
-    refresh_token_expires_in_seconds = decoded_refresh_token['exp'] - decoded_refresh_token['iat']
-    
+    refresh_token_expires_in_seconds = decoded_refresh_token['exp'] - \
+        decoded_refresh_token['iat']
+
     response = make_response(
         jsonify({
-        "message": "User created and logged in successfully",
-        "access_token": access_token,
-        "access_token_expires_time (seconds)": access_token_expires_in_seconds,
-        "refresh_token_expires_time (seconds)": refresh_token_expires_in_seconds,
-    }), 201)
-    
+            "message": "User created and logged in successfully",
+            "access_token": access_token,
+            "access_token_expires_time (seconds)": access_token_expires_in_seconds,
+            "refresh_token_expires_time (seconds)": refresh_token_expires_in_seconds,
+        }), 201)
+
     response.set_cookie(
         'refreshToken',
         refresh_token,
@@ -72,7 +74,7 @@ def register_user():
         samesite='None',
         path="/"
     )
-    
+
     return response
 
 
@@ -96,7 +98,7 @@ def login_user():
         "message": "Logged in successfully",
         "access_token": access_token,
     }), 200)
-    
+
     response.set_cookie(
         'refreshToken',
         refresh_token,
@@ -105,10 +107,8 @@ def login_user():
         samesite='None',
         path="/"
     )
-    
+
     return response
-    
-    
 
 
 @auth_bp.get('/refresh')
@@ -116,21 +116,22 @@ def login_user():
 def refresh_access():
     refresh_token = request.cookies.get('refreshToken')
     print(request.cookies)
-    
+
     if not refresh_token:
         return jsonify({"error": "Refresh token is missing"}), 401
-    
+
     try:
         decoded_refresh_token = decode_token(refresh_token)
         user_email = decoded_refresh_token['sub']
-        
+
         user = User.get_user_by_email(email=user_email)
-        new_access_token, new_refresh_token = create_access_and_refresh_tokens(user=user)
-        
+        new_access_token, new_refresh_token = create_access_and_refresh_tokens(
+            user=user)
+
         response = make_response(
             jsonify({"access_token": new_access_token})
         )
-        
+
         response.set_cookie(
             'refreshToken',
             new_refresh_token,
@@ -140,10 +141,10 @@ def refresh_access():
             path="/"
         )
         return response
-        
+
     except Exception as e:
         return jsonify({"error": "Invalid refresh token"}), 401
-    
+
 
 def update_data(user, data):
     if 'username' in data:
@@ -169,13 +170,12 @@ def update_user_profile():
 
     if not data:
         return jsonify({'error': 'No data provided'}), 400
-    
+
     errors = update_schema.validate(data)
 
     if errors:
         return jsonify({'error': errors}), 400
-    
-    
+
     new_email = data.get('email')
     if new_email and new_email != user_email:
         existing_user = User.get_user_by_email(new_email)
@@ -188,12 +188,12 @@ def update_user_profile():
 
     # Обновляем токены
     access_token, refresh_token = create_access_and_refresh_tokens(user)
-    
+
     response = make_response(jsonify({
         "message": "User profile updated successfully",
         "access_token": access_token,
     }), 200)
-    
+
     response.set_cookie(
         'refreshToken',
         refresh_token,
@@ -202,7 +202,7 @@ def update_user_profile():
         samesite='None',
         path="/"
     )
-    
+
     return response
 
 
@@ -221,8 +221,10 @@ def logout_user():
     token_b = TokenBlockList(jti=jti)
     token_b.save(user_id=user.id)
 
-    response = make_response(jsonify({'message': f'{token_type} token revoked successfully'}), 200)
-    response.delete_cookie(key='refreshToken', httponly=True, secure=True, samesite='None', path="/")
+    response = make_response(
+        jsonify({'message': f'{token_type} token revoked successfully'}), 200)
+    response.delete_cookie(key='refreshToken', httponly=True,
+                           secure=True, samesite='None', path="/")
 
     return response
 
@@ -240,7 +242,8 @@ def delete_account():
     # logout_user()
     user.delete()
 
-    response = make_response(jsonify({'message': f'User profile {user.username} deleted successfully'}), 200)
+    response = make_response(
+        jsonify({'message': f'User profile {user.username} deleted successfully'}), 200)
     response.delete_cookie('refreshToken')
     return response
 
@@ -326,28 +329,27 @@ def restore_password():
     return jsonify({'message': 'Password reset successfully'}), 200
 
 
-
 @auth_bp.put('/updateUserPassword')
 @jwt_required()
 @swag_from('docs/Auth/update_user_password.yml')
 def update_user_password():
     user_email = get_jwt_identity()
     user = User.get_user_by_email(user_email)
-    
+
     if not user:
         return jsonify({'error': 'User with this email is not registered'}), 404
 
     data = request.get_json()
-    
+
     old_password = data.get('old_password')
     new_password = data.get('new_password')
-    
+
     if not user.check_password(password=old_password):
         return jsonify({'error': 'The current password is incorrect'}), 400
-    
+
     if user.check_password(password=new_password):
         return jsonify({'error': 'The new password cannot be the same as the current password'}), 400
-    
+
     new_data = {
         'new_password': new_password
     }
@@ -355,11 +357,10 @@ def update_user_password():
 
     if errors:
         return jsonify({'error': errors}), 400
-    
+
     user.set_password(new_password)
     user.save()
-    
+
     return jsonify({
         'message': 'User password updated successfully',
     }), 200
-    

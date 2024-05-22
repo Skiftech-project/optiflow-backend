@@ -189,3 +189,7 @@ class SavedCalculationTemplate(db.Model):
     @classmethod
     def get_saved_templates(cls, user_id):
         return cls.query.filter_by(user_id=user_id).all()
+
+    @classmethod
+    def get_template_by_id(cls, template_id):
+        return cls.query.filter_by(id=template_id).first()
