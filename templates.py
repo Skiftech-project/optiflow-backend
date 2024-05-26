@@ -67,6 +67,7 @@ def get_user_saved_templates():
 @swag_from('docs/Template/saveTemplate.yml')
 def save_templates():
     data = request.get_json()
+    combined_data = {**data.get('input_data', {}), **data.get('output_data', {})}
 
     user_email = get_jwt_identity()
     user = User.get_user_by_email(email=user_email)
@@ -74,7 +75,7 @@ def save_templates():
     if not user:
         return jsonify({'error': 'User with this email is not registered'}), 404
 
-    template = SavedCalculationTemplate(user_id=user.id, **data)
+    template = SavedCalculationTemplate(user_id=user.id, **combined_data)
     template.save()
 
     return jsonify({"message": "Template saved successfully"}), 200

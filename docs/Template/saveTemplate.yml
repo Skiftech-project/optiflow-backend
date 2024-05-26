@@ -15,54 +15,62 @@ parameters:
     schema:
       type: object
       properties:
-        calculator_type:
-          type: string
-          description: From which calculator user saved the template.
-        title:
-          type: string
-          description: Title of the template.
-        sensitivity:
-          type: number
-          description: Sensitivity of the template.
-        power:
-          type: number
-          description: Power of the template.
-        plume_form:
-          type: string
-          description: Plume form of the template.
-        angle_width:
-          type: number
-          description: Angle width of the template.
-        angle_height:
-          type: number
-          description: Angle height of the template.
-        distance:
-          type: number
-          description: Distance of the template.
-        spot_width:
-          type: number
-          description: Spot width of the template.
-        spot_height:
-          type: number
-          description: Spot height of the template.
-        min_plume_size:
-          type: number
-          description: Minimum plume size of the template.
-        distance_for_plume_size:
-          type: number
-          description: Distance for plume size of the template.
-        max_distance:
-          type: number
-          description: Maximum distance of the template.
-        min_distance:
-          type: number
-          description: Minimum distance of the template.
-        plume_width_module3:
-          type: number
-          description: Plume width module 3 of the template.
-        plume_height_module3:
-          type: number
-          description: Plume height module 3 of the template.
+        input_data:
+          type: object
+          description: Input data for the template.
+          properties:
+            calculator_type:
+              type: string
+              description: From which calculator user saved the template.
+            title:
+              type: string
+              description: Title of the template.
+            sensitivity:
+              type: number
+              description: Sensitivity of the template.
+            power:
+              type: number
+              description: Power of the template.
+            plume_form:
+              type: string
+              description: Plume form of the template.
+            angle_width:
+              type: number
+              description: Angle width of the template.
+            angle_height:
+              type: number
+              description: Angle height of the template.
+            distance:
+              type: number
+              description: Distance of the template.
+            spot_width:
+              type: number
+              description: Spot width of the template.
+            spot_height:
+              type: number
+              description: Spot height of the template.
+            min_plume_size:
+              type: number
+              description: Minimum plume size of the template.
+            distance_for_plume_size:
+              type: number
+              description: Distance for plume size of the template.
+        output_data:
+          type: object
+          description: Output data for the template.
+          properties:
+            max_distance:
+              type: number
+              description: Maximum distance of the template.
+            min_distance:
+              type: number
+              description: Minimum distance of the template.
+            plume_width_module3:
+              type: number
+              description: Plume width module 3 of the template.
+            plume_height_module3:
+              type: number
+              description: Plume height module 3 of the template.
 responses:
   "200":
     description: Template saved successfully.

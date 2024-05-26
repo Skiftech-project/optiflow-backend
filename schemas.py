@@ -1,6 +1,6 @@
 import re
 
-from marshmallow import Schema, ValidationError, fields, validate
+from marshmallow import Schema, ValidationError, fields, validate, post_dump
 
 
 def validate_password(password):
@@ -59,12 +59,11 @@ class CalculationTemplateSchema(Schema):
     min_plume_size = fields.Float()
     distance_for_plume_size = fields.Float()
 
-
 class SavedCalculationTemplateSchema(Schema):
     id = fields.Integer(required=True)
+    user_id = fields.String(required=True)
     calculator_type = fields.String(required=True)
     title = fields.String(required=True)
-    user_id = fields.String(required=True)
     sensitivity = fields.Float(required=True)
     power = fields.Float(required=True)
     plume_form = fields.String(required=True)
@@ -79,3 +78,32 @@ class SavedCalculationTemplateSchema(Schema):
     min_distance = fields.Float()
     plume_width_module3 = fields.Float()
     plume_height_module3 = fields.Float()
+    
+    @post_dump
+    def split_data(self, data, many, **kwargs):
+        print(f'----------------------{data}------------------------------')
+        input_data = {
+            'calculator_type': data.pop('calculator_type'),
+            'title': data.pop('title'),
+            'sensitivity': data.pop('sensitivity'),
+            'power': data.pop('power'),
+            'plume_form': data.pop('plume_form'),
+            'angle_width': data.pop('angle_width'),
+            'angle_height': data.pop('angle_height'),
+            'distance': data.pop('distance'),
+            'spot_width': data.pop('spot_width'),
+            'spot_height': data.pop('spot_height'),
+            'min_plume_size': data.pop('min_plume_size'),
+            'distance_for_plume_size': data.pop('distance_for_plume_size')
+        }
+        output_data = {
+            'max_distance': data.pop('max_distance'),
+            'min_distance': data.pop('min_distance'),
+            'plume_width_module3': data.pop('plume_width_module3'),
+            'plume_height_module3': data.pop('plume_height_module3')
+        }
+        data['input_data'] = input_data
+        data['output_data'] = output_data
+        return data
+    
+
