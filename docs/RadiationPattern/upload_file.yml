@@ -1,0 +1,40 @@
+This is the API for processing input data from a file upload.
+---
+summary: Process Input Data
+description: |
+  Uploads a file containing input data and processes it. If successful, returns the processed data.
+tags:
+  - Radiation Pattern
+parameters:
+  - in: formData
+    name: input_data
+    type: file
+    required: true
+    description: The CSV file containing input data to be processed.
+responses:
+  "200":
+    description: Successfully processed input data.
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          description: Processed input data.
+          example: {"column1": [1, 2, 3], "column2": [4, 5, 6]}
+  "400":
+    description: No file uploaded or file upload failed.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message indicating no file uploaded or file upload failed.
+          example: No file uploaded
+  "500":
+    description: Internal server error.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message indicating internal server error.

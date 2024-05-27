@@ -11,6 +11,7 @@ from auth import auth_bp
 from extensions import db, jwt, migrate
 from models import TokenBlockList, User
 from templates import template_bp
+from radiation_pattern import radiation_pattern_bp
 
 # for local
 # load_dotenv()
@@ -60,6 +61,7 @@ jwt.init_app(app)
 # register blueprints
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(template_bp, url_prefix='/templates')
+app.register_blueprint(radiation_pattern_bp, url_prefix='/radiation_pattern')
 
 # jwt error handlers
 
