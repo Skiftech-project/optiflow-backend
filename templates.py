@@ -67,7 +67,9 @@ def get_user_saved_templates():
 @swag_from('docs/Template/saveTemplate.yml')
 def save_templates():
     data = request.get_json()
-    combined_data = {**data.get('input_data', {}), **data.get('output_data', {})}
+    combined_data = {**data.get('input_data', {}),
+                     **data.get('output_data', {})}
+    combined_data['title'] = data.get('title')
 
     user_email = get_jwt_identity()
     user = User.get_user_by_email(email=user_email)

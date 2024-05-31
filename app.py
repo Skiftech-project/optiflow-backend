@@ -264,9 +264,8 @@ def index3d():
         return jsonify({
             'bad_request': 'mistake in filling fields'
         })
-        
-        
-        
+
+
 @app.route('/ray', methods=['POST'])
 def ray():
     data = request.get_json()

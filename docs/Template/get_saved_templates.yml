@@ -3,11 +3,11 @@ description: Retrieves saved calculation templates for the current user.
 tags:
   - Templates
 parameters:
-- in: header
-  name: Authorization
-  type: string
-  required: true
-  description: JWT token obtained during authentication.
+  - in: header
+    name: Authorization
+    type: string
+    required: true
+    description: JWT token obtained during authentication.
 responses:
   "200":
     description: User's templates retrieved successfully.
@@ -25,6 +25,9 @@ responses:
               user_id:
                 type: string
                 description: User ID associated with the template.
+              title:
+                type: string
+                description: Title of the template.
               input_data:
                 type: object
                 description: Input data for the template.
@@ -32,9 +35,6 @@ responses:
                   calculator_type:
                     type: string
                     description: From which calculator user saved the template.
-                  title:
-                    type: string
-                    description: Title of the template.
                   sensitivity:
                     type: number
                     description: Sensitivity of the template.

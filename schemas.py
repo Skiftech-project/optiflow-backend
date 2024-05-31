@@ -59,6 +59,7 @@ class CalculationTemplateSchema(Schema):
     min_plume_size = fields.Float()
     distance_for_plume_size = fields.Float()
 
+
 class SavedCalculationTemplateSchema(Schema):
     id = fields.Integer(required=True)
     user_id = fields.String(required=True)
@@ -78,13 +79,13 @@ class SavedCalculationTemplateSchema(Schema):
     min_distance = fields.Float()
     plume_width_module3 = fields.Float()
     plume_height_module3 = fields.Float()
-    
+
     @post_dump
     def split_data(self, data, many, **kwargs):
         print(f'----------------------{data}------------------------------')
+
         input_data = {
             'calculator_type': data.pop('calculator_type'),
-            'title': data.pop('title'),
             'sensitivity': data.pop('sensitivity'),
             'power': data.pop('power'),
             'plume_form': data.pop('plume_form'),
@@ -102,8 +103,7 @@ class SavedCalculationTemplateSchema(Schema):
             'plume_width_module3': data.pop('plume_width_module3'),
             'plume_height_module3': data.pop('plume_height_module3')
         }
+        data['title'] = data.pop('title')
         data['input_data'] = input_data
         data['output_data'] = output_data
         return data
-    
-
