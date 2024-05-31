@@ -268,7 +268,7 @@ def index3d():
         
         
 @app.route('/ray', methods=['POST'])
-def index3d():
+def ray():
     data = request.get_json()
     sensitivity = float(data['sensitivity'])
     power = float(data['power'])
