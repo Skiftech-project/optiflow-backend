@@ -264,6 +264,67 @@ def index3d():
         return jsonify({
             'bad_request': 'mistake in filling fields'
         })
+        
+        
+        
+@app.route('/ray', methods=['POST'])
+def index3d():
+    data = request.get_json()
+    sensitivity = float(data['sensitivity'])
+    power = float(data['power'])
+    max_area = calculate_max_area(sensitivity, power)
+
+    plume_form = data['plumeForm']
+
+    if 'angleWidth' and 'angleHeight' in data:
+        angle_width = radians(float(data['angleWidth']))
+        angle_height = radians(float(data['angleHeight']))
+
+        max_distance = calculate_max_distance(
+            max_area, angle_width, angle_height, plume_form)
+
+    elif 'spotWidth' and 'spotHeight' in data:
+        distance = float(data['distance'])
+        plume_width = float(data['spotWidth'])
+        plume_height = float(data['spotHeight'])
+        angle_width = (calculate_divergence_angle(plume_width, distance))
+        angle_height = (calculate_divergence_angle(plume_height, distance))
+
+        max_distance = calculate_max_distance(
+            max_area, angle_width, angle_height, plume_form)
+
+    # module 2
+    min_plume_size = float(data['minPlumeSize'])
+    if min_plume_size != 0:
+        min_distance = calculate_distance(
+            min_plume_size, min(angle_width, angle_height))
+    else:
+        min_distance = 0
+
+    plume_width_3d = calculate_size(angle_width, max_distance)
+    plume_height_3d = calculate_size(angle_height, max_distance)
+
+    # module 3
+    distance_for_plume_size = float(data['distanceModuleThird'])
+    if distance_for_plume_size != 0:
+        plume_width_module3 = calculate_size(
+            angle_width, distance_for_plume_size)
+        plume_height_module3 = calculate_size(
+            angle_height, distance_for_plume_size)
+    else:
+        plume_width_module3 = 0
+        plume_height_module3 = 0
+
+    return jsonify({
+        'angle_width': round(degrees(angle_width), 2),
+        'angle_height': round(degrees(angle_height), 2),
+        'max_distance': round(max_distance, 2),
+        'min_distance': round(min_distance, 2),
+        'plume_width': round(plume_width_3d, 2),
+        'plume_height': round(plume_height_3d, 2),
+        'plume_width_cut': round(plume_width_module3, 2),
+        'plume_height_cut': round(plume_height_module3, 2)
+    })
 
 
 def calculate_divergence_angle(size, distance):
