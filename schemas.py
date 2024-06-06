@@ -70,9 +70,9 @@ class SavedCalculationTemplateSchema(Schema):
     plume_form = fields.String(required=True)
     angle_width = fields.Float(required=True)
     angle_height = fields.Float(required=True)
-    distance = fields.Float()
-    spot_width = fields.Float()
-    spot_height = fields.Float()
+    distance = fields.Float(allow_none=True)
+    spot_width = fields.Float(allow_none=True)
+    spot_height = fields.Float(allow_none=True)
     min_plume_size = fields.Float()
     distance_for_plume_size = fields.Float()
     max_distance = fields.Float(required=True)
@@ -89,8 +89,6 @@ class SavedCalculationTemplateSchema(Schema):
             'sensitivity': data.pop('sensitivity'),
             'power': data.pop('power'),
             'plume_form': data.pop('plume_form'),
-            'angle_width': data.pop('angle_width'),
-            'angle_height': data.pop('angle_height'),
             'distance': data.pop('distance'),
             'spot_width': data.pop('spot_width'),
             'spot_height': data.pop('spot_height'),
@@ -103,6 +101,12 @@ class SavedCalculationTemplateSchema(Schema):
             'plume_width_module3': data.pop('plume_width_module3'),
             'plume_height_module3': data.pop('plume_height_module3')
         }
+        if input_data.get('distance') is None and input_data.get('spot_width') is None and input_data.get('spot_height') is None:
+            input_data['angle_width'] = data.pop('angle_width')
+            input_data['angle_height'] = data.pop('angle_height')
+        else:
+            output_data['angle_width'] = data.pop('angle_width')
+            output_data['angle_height'] = data.pop('angle_height')
         data['title'] = data.pop('title')
         data['input_data'] = input_data
         data['output_data'] = output_data
