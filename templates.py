@@ -71,6 +71,10 @@ def save_templates():
                      **data.get('output_data', {})}
     combined_data['title'] = data.get('title')
 
+    errors = saved_calculation_template_schema.validate(combined_data)
+    if errors:
+        return jsonify(errors), 400
+
     user_email = get_jwt_identity()
     user = User.get_user_by_email(email=user_email)
 

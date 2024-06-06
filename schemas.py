@@ -61,8 +61,8 @@ class CalculationTemplateSchema(Schema):
 
 
 class SavedCalculationTemplateSchema(Schema):
-    id = fields.Integer(required=True)
-    user_id = fields.String(required=True)
+    id = fields.Integer(required=True, dump_only=True)
+    user_id = fields.String(required=True, dump_only=True)
     calculator_type = fields.String(required=True)
     title = fields.String(required=True)
     sensitivity = fields.Float(required=True)
