@@ -1,0 +1,91 @@
+API for combined calculations for 2d and 3d calculators
+---
+tags:
+  - Calculator
+summary: Calculate maximum and minimum distances and plume sizes based on input parameters.
+parameters:
+  - in: body
+    name: body
+    description: JSON object containing calculation parameters.
+    required: true
+    schema:
+      type: object
+      properties:
+        sensitivity:
+          type: number
+          description: Sensitivity of the measurement.
+          example: 0.5
+        power:
+          type: number
+          description: Power level used in the calculation.
+          example: 10
+        plumeForm:
+          type: string
+          description: Form of the plume.
+          example: "ellipse"
+        angleWidth:
+          type: number
+          description: Width of the angle in degrees.
+          example: 30
+        angleHeight:
+          type: number
+          description: Height of the angle in degrees.
+          example: 45
+        distance:
+          type: number
+          description: Distance to the plume.
+          example: 100
+        spotWidth:
+          type: number
+          description: Width of the spot.
+          example: 5
+        spotHeight:
+          type: number
+          description: Height of the spot.
+          example: 10
+        minPlumeSize:
+          type: number
+          description: Minimum size of the plume.
+          example: 0.1
+        distanceModuleThird:
+          type: number
+          description: Distance for the plume size calculation in module 3.
+          example: 150
+responses:
+  200:
+    description: Max distance calculation result.
+    schema:
+      type: object
+      properties:
+        angle_width:
+          type: number
+          description: Calculated angle width in degrees.
+          example: 30.0
+        angle_height:
+          type: number
+          description: Calculated angle height in degrees.
+          example: 45.0
+        max_distance:
+          type: number
+          description: Maximum calculated distance.
+          example: 200.0
+        min_distance:
+          type: number
+          description: Minimum calculated distance.
+          example: 10.0
+        plume_width:
+          type: number
+          description: Calculated plume width.
+          example: 15.0
+        plume_height:
+          type: number
+          description: Calculated plume height.
+          example: 20.0
+        plume_width_cut:
+          type: number
+          description: Calculated plume width for module 3.
+          example: 25.0
+        plume_height_cut:
+          type: number
+          description: Calculated plume height for module 3.
+          example: 30.0

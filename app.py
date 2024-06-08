@@ -267,6 +267,7 @@ def index3d():
 
 
 @app.route('/ray', methods=['POST'])
+@swag_from('docs/Calculators/postRay.yml')
 def ray():
     data = request.get_json()
     sensitivity = float(data['sensitivity'])
