@@ -1,6 +1,6 @@
 import re
 
-from marshmallow import Schema, ValidationError, fields, validate, post_dump
+from marshmallow import Schema, ValidationError, fields, post_dump, validate
 
 
 def validate_password(password):

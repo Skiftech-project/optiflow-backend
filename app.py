@@ -10,8 +10,8 @@ from flask_cors import CORS
 from auth import auth_bp
 from extensions import db, jwt, migrate
 from models import TokenBlockList, User
-from templates import template_bp
 from radiation_pattern import radiation_pattern_bp
+from templates import template_bp
 
 # for local
 # load_dotenv()

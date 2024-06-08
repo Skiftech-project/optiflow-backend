@@ -4,14 +4,15 @@ import smtplib
 from email.mime.text import MIMEText
 
 from flasgger import swag_from
-from flask import Blueprint, jsonify, request, make_response
+from flask import Blueprint, jsonify, make_response, request
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 current_user, decode_token, get_jwt,
                                 get_jwt_identity, jwt_required)
 from marshmallow import ValidationError
 
 from models import TokenBlockList, User
-from schemas import UserSchema, UserUpdateSchema, UserUpdatePasswordSchema, validate_password
+from schemas import (UserSchema, UserUpdatePasswordSchema, UserUpdateSchema,
+                     validate_password)
 
 auth_bp = Blueprint('auth', __name__)
 schema = UserSchema()

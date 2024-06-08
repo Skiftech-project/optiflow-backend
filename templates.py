@@ -4,7 +4,6 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from models import CalculationTemplate, SavedCalculationTemplate, User
 from schemas import CalculationTemplateSchema, SavedCalculationTemplateSchema
-from sqlalchemy.inspection import inspect
 
 template_bp = Blueprint('template', __name__)
 
