@@ -66,5 +66,10 @@ def process_column_lengths(column_data, length):
         if len(values) < max_length:
             while len(values) < max_length:
                 values.append(min_number)
-    column_data['model_type'] = length_dict.get(length, 'invalid')
-    return column_data
+
+    data = [values for values in column_data.values()]
+
+    return {
+        'data': data,
+        'model_type': length_dict.get(length, 'invalid')
+    }
